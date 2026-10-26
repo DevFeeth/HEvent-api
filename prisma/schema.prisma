@@ -1,0 +1,159 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../generated/prisma"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model category {
+  name   String   @id @db.VarChar(25)
+  label  String   @db.VarChar(50)
+  events events[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model orders {
+  id              Int          @id @default(autoincrement())
+  subtotal        Decimal      @db.Decimal(10, 2)
+  discount_amount Decimal      @default(0) @db.Decimal(10, 2)
+  total           Decimal?     @default(dbgenerated("(subtotal - discount_amount)")) @db.Decimal(10, 2)
+  status          order_status @default(PENDING)
+  created_at      DateTime     @default(now()) @db.Timestamptz(6)
+  user_id         Int
+  promo_code_id   Int?
+  promo_code      promo_code?  @relation(fields: [promo_code_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_orders_promo_code")
+  users           users        @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "fk_orders_user")
+  ticket          ticket[]
+
+  @@index([user_id], map: "idx_orders_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model promo_code {
+  id               Int           @id @default(autoincrement())
+  code             String        @unique @db.VarChar(50)
+  discount_type    discount_type
+  discount_value   Decimal       @db.Decimal(10, 2)
+  start_at         DateTime      @db.Timestamptz(6)
+  end_at           DateTime      @db.Timestamptz(6)
+  max_uses         Int?
+  min_order_amount Decimal       @default(0) @db.Decimal(10, 2)
+  is_active        Boolean       @default(true)
+  event_id         Int
+  orders           orders[]
+  event            events        @relation(fields: [event_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_promo_code_event")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model role {
+  name  String  @id @db.VarChar(25)
+  label String  @db.VarChar(50)
+  users users[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model ticket {
+  id             Int           @id @default(autoincrement())
+  public_token   String        @unique @db.VarChar(100)
+  status         ticket_status @default(VALID)
+  used_at        DateTime?     @db.Timestamptz(6)
+  purchase_price Decimal       @db.Decimal(10, 2)
+  ticket_type_id Int
+  order_id       Int
+  owner_id       Int
+  orders         orders        @relation(fields: [order_id], references: [id], onUpdate: NoAction, map: "fk_ticket_order")
+  users          users         @relation(fields: [owner_id], references: [id], onUpdate: NoAction, map: "fk_ticket_owner")
+  ticket_type    ticket_type   @relation(fields: [ticket_type_id], references: [id], onUpdate: NoAction, map: "fk_ticket_ticket_type")
+
+  @@index([order_id], map: "idx_ticket_order")
+  @@index([owner_id], map: "idx_ticket_owner")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model ticket_type {
+  id                 Int      @id @default(autoincrement())
+  name               String   @db.VarChar(50)
+  description        String?  @db.VarChar(500)
+  price              Decimal  @db.Decimal(10, 2)
+  available_quantity Int
+  event_id           Int
+  ticket             ticket[]
+  event              events   @relation(fields: [event_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ticket_type_event")
+
+  @@unique([event_id, name], map: "unique_ticket_type_event_name")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model events {
+  id            Int           @id @default(autoincrement())
+  name          String        @db.VarChar(100)
+  description   String?
+  image_url     String?
+  start_date    DateTime      @db.Date
+  end_date      DateTime      @db.Date
+  start_time    DateTime      @db.Time(6)
+  end_time      DateTime      @db.Time(6)
+  latitude      Decimal?      @db.Decimal(9, 6)
+  longitude     Decimal?      @db.Decimal(9, 6)
+  capacity      Int
+  status        event_status  @default(DRAFT)
+  created_at    DateTime      @default(now()) @db.Timestamptz(6)
+  category_name String        @db.VarChar(25)
+  organizer_id  Int
+  category      category      @relation(fields: [category_name], references: [name], onUpdate: NoAction, map: "fk_event_category")
+  users         users         @relation(fields: [organizer_id], references: [id], onUpdate: NoAction, map: "fk_event_organizer")
+  promo_code    promo_code[]
+  ticket_type   ticket_type[]
+
+  @@index([category_name], map: "idx_event_category")
+  @@index([organizer_id], map: "idx_event_organizer")
+  @@index([status, start_date], map: "idx_event_status_start")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model users {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique @db.VarChar(254)
+  first_name    String   @db.VarChar(50)
+  last_name     String   @db.VarChar(50)
+  password_hash String   @db.VarChar(255)
+  address       String?  @db.VarChar(255)
+  postal_code   String?  @db.VarChar(10)
+  city          String?  @db.VarChar(100)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  role_name     String   @default("USER") @db.VarChar(25)
+  events        events[]
+  orders        orders[]
+  ticket        ticket[]
+  role          role     @relation(fields: [role_name], references: [name], onUpdate: NoAction, map: "fk_user_role")
+}
+
+enum discount_type {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum event_status {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  FINISHED
+}
+
+enum order_status {
+  PENDING
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+enum ticket_status {
+  VALID
+  USED
+  CANCELLED
+}

@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:17
+    container_name: hevent-db
+    environment:
+      POSTGRES_USER: ${USERDB:-hevent}
+      POSTGRES_PASSWORD: ${PASSWORDDB:-hevent}
+      POSTGRES_DB: ${DBNAME:-hevent}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./src/scripts/SQL/hEvent.sql:/docker-entrypoint-initdb.d/initDB.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  api:
+    build: .
+    container_name: hevent-api
+    environment:
+      DATABASE_URL: postgresql://${USERDB:-hevent}:${PASSWORDDB:-hevent}@db:5432/${DBNAME:-hevent}
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
