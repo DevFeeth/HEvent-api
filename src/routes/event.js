@@ -1,5 +1,5 @@
 import Router from 'express';
-import { authBasic } from "../middlewares/identification/basic.js";
+import { checkJWT } from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as eventValidator from "../middlewares/validator/event.js";
 import * as paramsValidator from "../middlewares/validator/params.js";
@@ -14,11 +14,11 @@ import {
 
 const router = Router();
 
-router.get("/", authBasic, eventValidator.filterEvent, getEvents);
-router.get("/me", authBasic, mustBe.organizer, getMyEvents);
-router.get("/:id", authBasic, paramsValidator.id, getEventById);
-router.post("/", authBasic, mustBe.organizer, eventValidator.addEvent, addEvent);
-router.patch("/", authBasic, mustBe.organizer, eventValidator.updateEvent, updateEvent);
-router.delete("/:id", authBasic, mustBe.organizer, paramsValidator.id, deleteEvent);
+router.get("/", checkJWT, eventValidator.filterEvent, getEvents);
+router.get("/me", checkJWT, mustBe.organizer, getMyEvents);
+router.get("/:id", checkJWT, paramsValidator.id, getEventById);
+router.post("/", checkJWT, mustBe.organizer, eventValidator.addEvent, addEvent);
+router.patch("/:id", checkJWT, mustBe.organizer, eventValidator.updateEvent, updateEvent);
+router.delete("/:id", checkJWT, mustBe.organizer, paramsValidator.id, deleteEvent);
 
 export default router;

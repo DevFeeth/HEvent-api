@@ -21,6 +21,8 @@ services:
     container_name: hevent-api
     environment:
       DATABASE_URL: postgresql://${USERDB:-hevent}:${PASSWORDDB:-hevent}@db:5432/${DBNAME:-hevent}
+      PEPPER: ${PEPPER:-0b88da4438428b4a07c9787293f4ee310b79072955bb7b96e43976b11832c50e}
+      JWT_SECRET: ${JWT_SECRET:-84c3106f0db3a43ec1ff4d8c393fe7721d88fe0fb7f3ea90bb410f368378c0df}
     ports:
       - "3001:3001"
     depends_on:

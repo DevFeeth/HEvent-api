@@ -9,6 +9,11 @@ const profile = {
     password: vine.string().minLength(8).maxLength(72).optional()
 };
 
+const loginValidator = vine.create(vine.object({
+    email: vine.string().trim().toLowerCase().email(),
+    password: vine.string()
+}));
+
 const filterUserValidator = vine.create(vine.object({
     role_name: vine.enum(["USER", "ORGANIZER", "ADMIN"]).optional(),
     is_active: vine.boolean().optional()
@@ -36,6 +41,15 @@ const updateMeValidator = vine.create(vine.object({
     ...profile
 }));
 
+export const loginUser = async (req, res, next) => {
+    try {
+        req.val = await loginValidator.validate(req.body ?? {});
+        next();
+    } catch (e) {
+        res.status(400).send(e.messages);
+    }
+};
+
 export const filterUsers = async (req, res, next) => {
     try {
         req.val = await filterUserValidator.validate(req.query);
@@ -45,7 +59,7 @@ export const filterUsers = async (req, res, next) => {
     }
 };
 
-export const addUser = async (req, res, next) => {
+export const registerUser = async (req, res, next) => {
     try {
         req.val = await addUserValidator.validate(req.body ?? {});
         next();
@@ -56,7 +70,7 @@ export const addUser = async (req, res, next) => {
 
 export const updateUser = async (req, res, next) => {
     try {
-        req.val = await updateUserValidator.validate(req.body ?? {});
+        req.val = await updateUserValidator.validate({...req.body, id: req.params.id});
         if(Object.keys(req.val).length === 1){
             return res.status(400).send("Aucun champ à modifier");
         }

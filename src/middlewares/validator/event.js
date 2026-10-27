@@ -69,7 +69,7 @@ export const addEvent = async (req, res, next) => {
 
 export const updateEvent = async (req, res, next) => {
     try {
-        req.val = await updateEventValidator.validate(req.body ?? {});
+        req.val = await updateEventValidator.validate({...req.body, id: req.params.id});
         if(Object.keys(req.val).length === 1){
             return res.status(400).send("Aucun champ à modifier");
         }

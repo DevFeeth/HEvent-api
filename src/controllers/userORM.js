@@ -1,10 +1,12 @@
 import prisma from "../database/databaseORM.js";
 import * as userModel from "../models/user.js";
-import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import {hash, verify} from "../utils/hash.js";
 
 export const getUsers = async (req, res) => {
     try {
-        const users = await userModel.readUsers(prisma, req.val);
+        const filters = req.val;
+        const users = await userModel.readUsers(prisma, filters);
         res.send(users);
     } catch (err) {
         console.error(err);
@@ -40,12 +42,12 @@ export const getMe = async (req, res) => {
     }
 };
 
-export const addUser = async (req, res) => {
+export const registerUser = async (req, res) => {
     try {
         const {password, ...fields} = req.val;
         const id = await userModel.createUser(prisma, {
             ...fields,
-            password_hash: await bcrypt.hash(password, 12)
+            password_hash: await hash(password)
         });
         res.status(201).json({id});
     } catch (err) {
@@ -58,7 +60,7 @@ export const updateUser = async (req, res) => {
     try {
         const {password, ...fields} = req.val;
         if (password) {
-            fields.password_hash = await bcrypt.hash(password, 12);
+            fields.password_hash = await hash(password);
         }
         await userModel.updateUser(prisma, fields);
         res.sendStatus(204);
@@ -72,7 +74,7 @@ export const updateMe = async (req, res) => {
     try {
         const {password, ...fields} = req.val;
         if(password){
-            fields.password_hash = await bcrypt.hash(password, 12);
+            fields.password_hash = await hash(password);
         }
         await userModel.updateUser(prisma, {...fields, id: req.session.id});
         res.sendStatus(204);
@@ -91,3 +93,22 @@ export const deleteUser = async (req, res) => {
         res.sendStatus(500);
     }
 };
+
+export const loginUser = async (req, res) => {
+    try {
+        const user = await userModel.readUserByEmail(prisma, {email: req.val.email});
+        if (user && user.is_active && await verify(user.password_hash, req.val.password)) {
+            const token = jwt.sign(
+                {id: user.id, role: user.role_name},
+                process.env.JWT_SECRET,
+                {expiresIn: "24h"}
+            );
+            res.send({token});
+        } else {
+            res.sendStatus(401);
+        }
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
+}

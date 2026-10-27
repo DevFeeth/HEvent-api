@@ -1,5 +1,5 @@
 import Router from 'express';
-import { authBasic } from "../middlewares/identification/basic.js";
+import { checkJWT } from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as userValidator from "../middlewares/validator/user.js";
 import * as paramsValidator from "../middlewares/validator/params.js";
@@ -7,7 +7,8 @@ import {
     getUsers,
     getUserById,
     getMe,
-    addUser,
+    registerUser,
+    loginUser,
     updateUser,
     updateMe,
     deleteUser,
@@ -15,12 +16,13 @@ import {
 
 const router = Router();
 
-router.get("/", authBasic, mustBe.admin, userValidator.filterUsers, getUsers);
-router.get("/me", authBasic, getMe);
-router.get("/:id", authBasic, mustBe.admin, paramsValidator.id, getUserById);
-router.post("/", userValidator.addUser, addUser);
-router.patch("/me", authBasic, userValidator.updateMe, updateMe);
-router.patch("/", authBasic, mustBe.admin, userValidator.updateUser, updateUser);
-router.delete("/:id", authBasic, mustBe.admin, paramsValidator.id, deleteUser);
+router.get("/", checkJWT, mustBe.admin, userValidator.filterUsers, getUsers);
+router.get("/me", checkJWT, getMe);
+router.get("/:id", checkJWT, mustBe.admin, paramsValidator.id, getUserById);
+router.post("/", userValidator.registerUser, registerUser);
+router.post("/login", userValidator.loginUser, loginUser);
+router.patch("/me", checkJWT, userValidator.updateMe, updateMe);
+router.patch("/:id", checkJWT, mustBe.admin, userValidator.updateUser, updateUser);
+router.delete("/:id", checkJWT, mustBe.admin, paramsValidator.id, deleteUser);
 
 export default router;

@@ -364,16 +364,16 @@ CREATE INDEX idx_orders_user ON orders(user_id);
 
 INSERT INTO users (email, first_name, last_name, password_hash, address, postal_code, city, role_name)
 VALUES ('user@mail.com','Ulysse','User',
-        '$2a$12$igo9ArOBeO6skYaSfzXHwuw1WfAmO/CAzf/cVuG476BO9ia848wwi',
+        '$argon2id$v=19$m=65536,p=4,t=3$dcn3iaqs459ikvq3YF3hyg$VkITkeewP5Vlzox07dohAZf/FwYeONhJsQidgbDPJo0',
         'Avenue Roi Albert 79','5300','Andenne',
         DEFAULT),
 
        ('orga@mail.com', 'Olive', 'Orga',
-        '$2a$12$igo9ArOBeO6skYaSfzXHwuw1WfAmO/CAzf/cVuG476BO9ia848wwi',
+        '$argon2id$v=19$m=65536,p=4,t=3$dcn3iaqs459ikvq3YF3hyg$VkITkeewP5Vlzox07dohAZf/FwYeONhJsQidgbDPJo0',
         'Place Josephine Charlotte 17', '5000', 'Namur',
         'ORGANIZER'),
 
        ('admin@mail.com', 'Adam', 'Admin',
-        '$2a$12$igo9ArOBeO6skYaSfzXHwuw1WfAmO/CAzf/cVuG476BO9ia848wwi',
+        '$argon2id$v=19$m=65536,p=4,t=3$dcn3iaqs459ikvq3YF3hyg$VkITkeewP5Vlzox07dohAZf/FwYeONhJsQidgbDPJo0',
         'Rue de la Résistance 8', '5300', 'Seilles',
         'ADMIN');
