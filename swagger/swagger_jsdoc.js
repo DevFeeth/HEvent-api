@@ -9,7 +9,7 @@ const options = {
             version: "1.0.0",
         },
         servers: [
-            {url: "http://localhost:3001/api"}
+            {url: "http://localhost:3001/api/v1"}
         ],
     },
     apis: [

@@ -55,7 +55,7 @@ export const getUsers = async (req, res) => {
         const users = await userModel.readUsers(prisma, filters);
         res.send(users);
     } catch (err) {
-        console.error(err);
+        req.log.error(err);
         res.sendStatus(500);
     }
 };
@@ -69,7 +69,7 @@ export const getUserById = async (req, res) => {
             res.sendStatus(404);
         }
     } catch (err) {
-        console.error(err);
+        req.log.error(err);
         res.sendStatus(500);
     }
 };
@@ -83,7 +83,7 @@ export const getMe = async (req, res) => {
             res.sendStatus(404);
         }
     } catch (err) {
-        console.error(err);
+        req.log.error(err);
         res.sendStatus(500);
     }
 };
@@ -97,7 +97,7 @@ export const registerUser = async (req, res) => {
         });
         res.status(201).json({id});
     } catch (err) {
-        console.error(err);
+        req.log.error(err);
         res.sendStatus(500);
     }
 };
@@ -110,8 +110,8 @@ export const updateUser = async (req, res) => {
         }
         await userModel.updateUser(prisma, fields);
         res.sendStatus(204);
-    } catch (e) {
-        console.error(e);
+    } catch (err) {
+        req.log.error(err);
         res.sendStatus(500);
     }
 };
@@ -124,8 +124,8 @@ export const updateMe = async (req, res) => {
         }
         await userModel.updateUser(prisma, {...fields, id: req.session.id});
         res.sendStatus(204);
-    } catch (e) {
-        console.error(e);
+    } catch (err) {
+        req.log.error(err);
         res.sendStatus(500);
     }
 };
@@ -134,8 +134,8 @@ export const deleteUser = async (req, res) => {
     try {
         await userModel.deleteUser(prisma, {id: req.val.id});
         res.sendStatus(204);
-    } catch (e) {
-        console.error(e);
+    } catch (err) {
+        req.log.error(err);
         res.sendStatus(500);
     }
 };
@@ -154,7 +154,7 @@ export const loginUser = async (req, res) => {
             res.sendStatus(401);
         }
     } catch (err) {
-        console.error(err);
+        req.log.error(err);
         res.sendStatus(500);
     }
 }

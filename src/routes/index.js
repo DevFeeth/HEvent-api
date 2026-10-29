@@ -28,10 +28,22 @@
  *                         example: Internal Server Error
  */
 
+import prisma from "../database/databaseORM.js";
 import {Router} from 'express';
 import {default as userRouter} from "./user.js";
 import {default as eventRouter} from "./event.js";
+
 const router = Router();
+
+router.get("/health", async (req, res) => {
+    try {
+        await prisma.$queryRaw`SELECT 1`;
+        res.send({status: "ok", uptime: process.uptime()});
+    } catch (err) {
+        req.log.error(err);
+        res.status(503).send({status: "error", database: "unreachable"});
+    }
+});
 
 router.use("/users", userRouter);
 router.use("/events", eventRouter);

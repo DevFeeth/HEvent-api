@@ -3,9 +3,9 @@ services:
     image: postgres:17
     container_name: hevent-db
     environment:
-      POSTGRES_USER: ${USERDB:-hevent}
-      POSTGRES_PASSWORD: ${PASSWORDDB:-hevent}
-      POSTGRES_DB: ${DBNAME:-hevent}
+        POSTGRES_USER: ${USERDB:?Variable USERDB manquante dans .env}
+        POSTGRES_PASSWORD: ${PASSWORDDB:?Variable PASSWORDDB manquante dans .env}
+        POSTGRES_DB: ${DBNAME:?Variable DBNAME manquante dans .env}
     ports:
       - "5432:5432"
     volumes:
@@ -20,9 +20,9 @@ services:
     build: .
     container_name: hevent-api
     environment:
-      DATABASE_URL: postgresql://${USERDB:-hevent}:${PASSWORDDB:-hevent}@db:5432/${DBNAME:-hevent}
-      PEPPER: ${PEPPER:-0b88da4438428b4a07c9787293f4ee310b79072955bb7b96e43976b11832c50e}
-      JWT_SECRET: ${JWT_SECRET:-84c3106f0db3a43ec1ff4d8c393fe7721d88fe0fb7f3ea90bb410f368378c0df}
+      DATABASE_URL: postgresql://${USERDB}:${PASSWORDDB}@db:5432/${DBNAME}
+      PEPPER: ${PEPPER:?Variable PEPPER manquante dans .env}
+      JWT_SECRET: ${JWT_SECRET:?Variable JWT_SECRET manquante dans .env}
     ports:
       - "3001:3001"
     depends_on:
