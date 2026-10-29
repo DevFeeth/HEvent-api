@@ -1,3 +1,49 @@
+/**
+ * @swagger
+ * components:
+ *     schemas:
+ *         User:
+ *             type: object
+ *             properties:
+ *                 id:
+ *                     type: integer
+ *                 email:
+ *                     type: string
+ *                     format: email
+ *                 first_name:
+ *                     type: string
+ *                 last_name:
+ *                     type: string
+ *                 address:
+ *                     type: string
+ *                     nullable: true
+ *                 postal_code:
+ *                     type: string
+ *                     nullable: true
+ *                 city:
+ *                     type: string
+ *                     nullable: true
+ *                 is_active:
+ *                     type: boolean
+ *                 created_at:
+ *                     type: string
+ *                     format: date-time
+ *                 role_name:
+ *                     type: string
+ *                     enum: [USER, ORGANIZER, ADMIN]
+ *     responses:
+ *         Token:
+ *             description: Connexion réussie => le JWT est valable 24 heures
+ *             content:
+ *                 application/json:
+ *                     schema:
+ *                         type: object
+ *                         properties:
+ *                             token:
+ *                                 type: string
+ *                                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ */
+
 import prisma from "../database/databaseORM.js";
 import * as userModel from "../models/user.js";
 import jwt from "jsonwebtoken";

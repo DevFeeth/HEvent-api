@@ -1,3 +1,96 @@
+/**
+ * @swagger
+ * components:
+ *     schemas:
+ *         UserToRegister:
+ *             type: object
+ *             properties:
+ *                 email:
+ *                     type: string
+ *                     format: email
+ *                     maxLength: 254
+ *                 first_name:
+ *                     type: string
+ *                     minLength: 1
+ *                     maxLength: 50
+ *                 last_name:
+ *                     type: string
+ *                     minLength: 1
+ *                     maxLength: 50
+ *                 password:
+ *                     type: string
+ *                     format: password
+ *                     minLength: 8
+ *                     maxLength: 72
+ *                 address:
+ *                     type: string
+ *                     maxLength: 255
+ *                 postal_code:
+ *                     type: string
+ *                     maxLength: 10
+ *                 city:
+ *                     type: string
+ *                     maxLength: 100
+ *             required:
+ *                 - email
+ *                 - first_name
+ *                 - last_name
+ *                 - password
+ *         UserToLogin:
+ *             type: object
+ *             properties:
+ *                 email:
+ *                     type: string
+ *                     format: email
+ *                 password:
+ *                     type: string
+ *                     format: password
+ *             required:
+ *                 - email
+ *                 - password
+ *         MeToUpdate:
+ *             type: object
+ *             description: Au moins un champ est requis
+ *             properties:
+ *                 first_name:
+ *                     type: string
+ *                     minLength: 1
+ *                     maxLength: 50
+ *                 last_name:
+ *                     type: string
+ *                     minLength: 1
+ *                     maxLength: 50
+ *                 address:
+ *                     type: string
+ *                     maxLength: 255
+ *                 postal_code:
+ *                     type: string
+ *                     maxLength: 10
+ *                 city:
+ *                     type: string
+ *                     maxLength: 100
+ *                 password:
+ *                     type: string
+ *                     format: password
+ *                     minLength: 8
+ *                     maxLength: 72
+ *         UserToUpdate:
+ *             description: Mêmes champs que MeToUpdate, + ceux réservés à l'administrateur (au moins un champ est requis)
+ *             allOf:
+ *                 - $ref: '#/components/schemas/MeToUpdate'
+ *                 - type: object
+ *                   properties:
+ *                       email:
+ *                           type: string
+ *                           format: email
+ *                           maxLength: 254
+ *                       is_active:
+ *                           type: boolean
+ *                       role_name:
+ *                           type: string
+ *                           enum: [USER, ORGANIZER, ADMIN]
+ */
+
 import vine from "@vinejs/vine";
 
 const profile = {
@@ -19,7 +112,7 @@ const filterUserValidator = vine.create(vine.object({
     is_active: vine.boolean().optional()
 }));
 
-const addUserValidator = vine.create(vine.object({
+const registerUserValidator = vine.create(vine.object({
     email: vine.string().trim().toLowerCase().email().maxLength(254),
     first_name: vine.string().trim().minLength(1).maxLength(50),
     last_name: vine.string().trim().minLength(1).maxLength(50),
@@ -61,7 +154,7 @@ export const filterUsers = async (req, res, next) => {
 
 export const registerUser = async (req, res, next) => {
     try {
-        req.val = await addUserValidator.validate(req.body ?? {});
+        req.val = await registerUserValidator.validate(req.body ?? {});
         next();
     } catch (e) {
         res.status(400).send(e.messages);

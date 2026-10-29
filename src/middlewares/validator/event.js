@@ -1,3 +1,110 @@
+/**
+ * @swagger
+ * components:
+ *     schemas:
+ *         EventToAdd:
+ *             type: object
+ *             description: Dates et heures à l'heure de Bruxelles
+ *             properties:
+ *                 name:
+ *                     type: string
+ *                     minLength: 1
+ *                     maxLength: 100
+ *                 description:
+ *                     type: string
+ *                     maxLength: 1000
+ *                 image_url:
+ *                     type: string
+ *                     format: uri
+ *                 start_date:
+ *                     type: string
+ *                     format: date
+ *                     example: "2026-12-26"
+ *                 end_date:
+ *                     type: string
+ *                     format: date
+ *                     example: "2026-12-27"
+ *                 start_time:
+ *                     type: string
+ *                     pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+ *                     example: "22:00"
+ *                 end_time:
+ *                     type: string
+ *                     pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+ *                     example: "04:00"
+ *                 latitude:
+ *                     type: number
+ *                     minimum: -90
+ *                     maximum: 90
+ *                 longitude:
+ *                     type: number
+ *                     minimum: -180
+ *                     maximum: 180
+ *                 capacity:
+ *                     type: integer
+ *                     minimum: 1
+ *                     example: 500
+ *                 status:
+ *                     type: string
+ *                     enum: [DRAFT, PUBLISHED, CANCELLED, FINISHED]
+ *                     default: DRAFT
+ *                 category_name:
+ *                     type: string
+ *                     maxLength: 25
+ *                     example: PARTY
+ *             required:
+ *                 - name
+ *                 - start_date
+ *                 - end_date
+ *                 - start_time
+ *                 - end_time
+ *                 - capacity
+ *                 - category_name
+ *         EventToUpdate:
+ *             type: object
+ *             description: Mêmes champs que EventToAdd, tous facultatifs (au moins un champ est requis)
+ *             properties:
+ *                 name:
+ *                     type: string
+ *                     minLength: 1
+ *                     maxLength: 100
+ *                 description:
+ *                     type: string
+ *                     maxLength: 1000
+ *                 image_url:
+ *                     type: string
+ *                     format: uri
+ *                 start_date:
+ *                     type: string
+ *                     format: date
+ *                 end_date:
+ *                     type: string
+ *                     format: date
+ *                 start_time:
+ *                     type: string
+ *                     pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+ *                 end_time:
+ *                     type: string
+ *                     pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+ *                 latitude:
+ *                     type: number
+ *                     minimum: -90
+ *                     maximum: 90
+ *                 longitude:
+ *                     type: number
+ *                     minimum: -180
+ *                     maximum: 180
+ *                 capacity:
+ *                     type: integer
+ *                     minimum: 1
+ *                 status:
+ *                     type: string
+ *                     enum: [DRAFT, PUBLISHED, CANCELLED, FINISHED]
+ *                 category_name:
+ *                     type: string
+ *                     maxLength: 25
+ */
+
 import vine from "@vinejs/vine";
 
 const date = () => vine.date({formats: ["YYYY-MM-DD"]})

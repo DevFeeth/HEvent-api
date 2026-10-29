@@ -1,3 +1,33 @@
+/**
+ * @swagger
+ * components:
+ *     responses:
+ *         Created:
+ *             description: Ressource créée => son id est renvoyé
+ *             content:
+ *                 application/json:
+ *                     schema:
+ *                         type: object
+ *                         properties:
+ *                             id:
+ *                                 type: integer
+ *                                 example: 12
+ *         NotFound:
+ *             description: Ressource introuvable
+ *             content:
+ *                 text/plain:
+ *                     schema:
+ *                         type: string
+ *                         example: Not Found
+ *         ServerError:
+ *             description: Erreur interne du serveur
+ *             content:
+ *                 text/plain:
+ *                     schema:
+ *                         type: string
+ *                         example: Internal Server Error
+ */
+
 import {Router} from 'express';
 import {default as userRouter} from "./user.js";
 import {default as eventRouter} from "./event.js";
@@ -5,10 +35,5 @@ const router = Router();
 
 router.use("/users", userRouter);
 router.use("/events", eventRouter);
-
-router.use((req, res) => {
-    console.error(`Bad URL: ${req.path}`);
-    return res.status(404).send("Il ne s'agit pas d'une URL prise en charge par l'application");
-});
 
 export default router;

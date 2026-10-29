@@ -1,3 +1,57 @@
+/**
+ * @swagger
+ * components:
+ *     schemas:
+ *         Event:
+ *             type: object
+ *             properties:
+ *                 id:
+ *                     type: integer
+ *                 name:
+ *                     type: string
+ *                 description:
+ *                     type: string
+ *                     nullable: true
+ *                 image_url:
+ *                     type: string
+ *                     nullable: true
+ *                 start_date:
+ *                     type: string
+ *                     description: Seulement la partie date compte (AAAA-MM-JJ)
+ *                     example: "2026-12-26T00:00:00.000Z"
+ *                 end_date:
+ *                     type: string
+ *                     example: "2026-12-27T00:00:00.000Z"
+ *                 start_time:
+ *                     type: string
+ *                     description: Seulement la partie heure compte (HH:mm)
+ *                     example: "2000-01-01T22:00:00.000Z"
+ *                 end_time:
+ *                     type: string
+ *                     example: "2000-01-01T04:00:00.000Z"
+ *                 latitude:
+ *                     type: string
+ *                     nullable: true
+ *                     description: Nombre décimal renvoyé sous forme de texte
+ *                     example: "50.465000"
+ *                 longitude:
+ *                     type: string
+ *                     nullable: true
+ *                     example: "4.865000"
+ *                 capacity:
+ *                     type: integer
+ *                 status:
+ *                     type: string
+ *                     enum: [DRAFT, PUBLISHED, CANCELLED, FINISHED]
+ *                 created_at:
+ *                     type: string
+ *                     format: date-time
+ *                 category_name:
+ *                     type: string
+ *                 organizer_id:
+ *                     type: integer
+ */
+
 import prisma from "../database/databaseORM.js";
 import * as eventModel from "../models/event.js";
 

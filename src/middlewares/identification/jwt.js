@@ -1,3 +1,21 @@
+/**
+ * @swagger
+ * components:
+ *     securitySchemes:
+ *         bearerAuth:
+ *             type: http
+ *             scheme: bearer
+ *             bearerFormat: JWT
+ *     responses:
+ *         UnauthorizedError:
+ *             description: Token absent, invalide ou expiré
+ *             content:
+ *                 text/plain:
+ *                     schema:
+ *                         type: string
+ *                         example: Unauthorized
+ */
+
 import jwt from "jsonwebtoken";
 
 export const checkJWT = async (req, res, next) => {
