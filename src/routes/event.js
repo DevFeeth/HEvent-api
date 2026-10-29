@@ -97,6 +97,8 @@
  *                 $ref: '#/components/responses/UnauthorizedError'
  *             404:
  *                 $ref: '#/components/responses/NotFound'
+ *             409:
+ *                 $ref: '#/components/responses/Conflict'
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     patch:
@@ -146,6 +148,8 @@
  *                 $ref: '#/components/responses/MustBeOrganizer'
  *             404:
  *                 $ref: '#/components/responses/NotFound'
+ *             409:
+ *                 $ref: '#/components/responses/Conflict'
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  */

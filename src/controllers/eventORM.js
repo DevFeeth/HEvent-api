@@ -54,6 +54,7 @@
 
 import prisma from "../database/databaseORM.js";
 import * as eventModel from "../models/event.js";
+import {sendError} from "../utils/sendError.js";
 
 export const getEvents = async (req, res) => {
     try {
@@ -68,8 +69,7 @@ export const getEvents = async (req, res) => {
         const events = await eventModel.readEvents(prisma, filters);
         res.send(events);
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -78,8 +78,7 @@ export const getMyEvents = async (req, res) => {
         const events = await eventModel.readEvents(prisma, {organizer_id: req.session.id});
         res.send(events);
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -93,8 +92,7 @@ export const getEventById = async (req, res) => {
             res.sendStatus(404);
         }
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -105,8 +103,7 @@ export const addEvent = async (req, res) => {
         });
         res.status(201).json({id});
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -123,8 +120,7 @@ export const updateEvent = async (req, res) => {
         await eventModel.updateEvent(prisma, fields);
         res.sendStatus(204);
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -140,7 +136,6 @@ export const deleteEvent = async (req, res) => {
         await eventModel.deleteEvent(prisma, {id: req.val.id});
         res.sendStatus(204);
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };

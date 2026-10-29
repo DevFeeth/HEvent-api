@@ -2,30 +2,37 @@
  * @swagger
  * components:
  *     responses:
- *         Created:
- *             description: Ressource créée => son id est renvoyé
- *             content:
- *                 application/json:
- *                     schema:
- *                         type: object
- *                         properties:
- *                             id:
- *                                 type: integer
- *                                 example: 12
- *         NotFound:
- *             description: Ressource introuvable
- *             content:
- *                 text/plain:
- *                     schema:
- *                         type: string
- *                         example: Not Found
- *         ServerError:
- *             description: Erreur interne du serveur
- *             content:
- *                 text/plain:
- *                     schema:
- *                         type: string
- *                         example: Internal Server Error
+ *        Created:
+ *            description: Ressource créée => son id est renvoyé
+ *            content:
+ *                application/json:
+ *                    schema:
+ *                        type: object
+ *                        properties:
+ *                            id:
+ *                                type: integer
+ *                                example: 12
+ *        NotFound:
+ *            description: Ressource introuvable
+ *            content:
+ *                text/plain:
+ *                    schema:
+ *                        type: string
+ *                        example: Not Found
+ *        ServerError:
+ *            description: Erreur interne du serveur
+ *            content:
+ *                text/plain:
+ *                    schema:
+ *                        type: string
+ *                        example: Internal Server Error
+ *        Conflict:
+ *            description: Conflit avec des données existantes (déjà utilisée ou liée à d'autres ressources)
+ *            content:
+ *                text/plain:
+ *                    schema:
+ *                        type: string
+ *                        example: Cette valeur est déjà utilisée
  */
 
 import prisma from "../database/databaseORM.js";

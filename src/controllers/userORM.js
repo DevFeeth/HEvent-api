@@ -48,6 +48,7 @@ import prisma from "../database/databaseORM.js";
 import * as userModel from "../models/user.js";
 import jwt from "jsonwebtoken";
 import {hash, verify} from "../utils/hash.js";
+import {sendError} from "../utils/sendError.js";
 
 export const getUsers = async (req, res) => {
     try {
@@ -55,8 +56,7 @@ export const getUsers = async (req, res) => {
         const users = await userModel.readUsers(prisma, filters);
         res.send(users);
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -69,8 +69,7 @@ export const getUserById = async (req, res) => {
             res.sendStatus(404);
         }
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -83,8 +82,7 @@ export const getMe = async (req, res) => {
             res.sendStatus(404);
         }
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -97,8 +95,7 @@ export const registerUser = async (req, res) => {
         });
         res.status(201).json({id});
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -111,8 +108,7 @@ export const updateUser = async (req, res) => {
         await userModel.updateUser(prisma, fields);
         res.sendStatus(204);
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -125,8 +121,7 @@ export const updateMe = async (req, res) => {
         await userModel.updateUser(prisma, {...fields, id: req.session.id});
         res.sendStatus(204);
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -135,8 +130,7 @@ export const deleteUser = async (req, res) => {
         await userModel.deleteUser(prisma, {id: req.val.id});
         res.sendStatus(204);
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 };
 
@@ -154,7 +148,6 @@ export const loginUser = async (req, res) => {
             res.sendStatus(401);
         }
     } catch (err) {
-        req.log.error(err);
-        res.sendStatus(500);
+        sendError(req, res, err);
     }
 }

@@ -51,6 +51,8 @@
  *                 $ref: '#/components/responses/Created'
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
+ *             409:
+ *                 $ref: '#/components/responses/Conflict'
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  */
@@ -207,6 +209,10 @@
  *                 $ref: '#/components/responses/UnauthorizedError'
  *             403:
  *                 $ref: '#/components/responses/MustBeAdmin'
+ *             404:
+ *                 $ref: '#/components/responses/NotFound'
+ *             409:
+ *                 $ref: '#/components/responses/Conflict'
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     delete:
@@ -227,6 +233,10 @@
  *                 $ref: '#/components/responses/UnauthorizedError'
  *             403:
  *                 $ref: '#/components/responses/MustBeAdmin'
+ *             404:
+ *                 $ref: '#/components/responses/NotFound'
+ *             409:
+ *                 $ref: '#/components/responses/Conflict'
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  */
