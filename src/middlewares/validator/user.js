@@ -140,8 +140,8 @@ export const loginUser = async (req, res, next) => {
     try {
         req.val = await loginValidator.validate(req.body ?? {});
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };
 
@@ -149,8 +149,8 @@ export const filterUsers = async (req, res, next) => {
     try {
         req.val = await filterUserValidator.validate(req.query);
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };
 
@@ -158,8 +158,8 @@ export const registerUser = async (req, res, next) => {
     try {
         req.val = await registerUserValidator.validate(req.body ?? {});
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };
 
@@ -170,8 +170,8 @@ export const updateUser = async (req, res, next) => {
             return res.status(400).send("Aucun champ à modifier");
         }
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };
 
@@ -182,7 +182,7 @@ export const updateMe = async (req, res, next) => {
             return res.status(400).send("Aucun champ à modifier");
         }
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };

@@ -96,8 +96,8 @@ export const eventId = async (req, res, next) => {
     try {
         req.val = await eventIdValidator.validate(req.params);
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };
 
@@ -105,8 +105,8 @@ export const addTicketType = async (req, res, next) => {
     try {
         req.val = await addTicketTypeValidator.validate({...req.body, event_id: req.params.event_id});
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };
 
@@ -117,7 +117,7 @@ export const updateTicketType = async (req, res, next) => {
             return res.status(400).send("Aucun champ à modifier");
         }
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };

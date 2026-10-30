@@ -160,8 +160,8 @@ export const filterEvent = async (req, res, next) => {
         }
         req.val = await filterEventValidator.validate(query);
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };
 
@@ -169,8 +169,8 @@ export const addEvent = async (req, res, next) => {
     try {
         req.val = await addEventValidator.validate(req.body ?? {});
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };
 
@@ -181,7 +181,7 @@ export const updateEvent = async (req, res, next) => {
             return res.status(400).send("Aucun champ à modifier");
         }
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };

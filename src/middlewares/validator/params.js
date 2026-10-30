@@ -45,7 +45,7 @@ export const id = async (req, res, next) => {
     try {
         req.val = await idValidator.validate(req.params);
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };
