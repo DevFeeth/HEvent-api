@@ -165,7 +165,7 @@ import {
     addEvent,
     updateEvent,
     deleteEvent,
-} from "../controllers/eventORM.js";
+} from "../controllers/event.js";
 
 const router = Router();
 

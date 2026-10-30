@@ -35,7 +35,7 @@
  *                        example: Cette valeur est déjà utilisée
  */
 
-import prisma from "../database/databaseORM.js";
+import prisma from "../database/database.js";
 import {Router} from 'express';
 import {default as userRouter} from "./user.js";
 import {default as eventRouter} from "./event.js";

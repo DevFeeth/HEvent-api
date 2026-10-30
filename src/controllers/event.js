@@ -52,7 +52,7 @@
  *                     type: integer
  */
 
-import prisma from "../database/databaseORM.js";
+import prisma from "../database/database.js";
 import * as eventModel from "../models/event.js";
 import {sendError} from "../utils/sendError.js";
 

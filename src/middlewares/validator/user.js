@@ -93,6 +93,8 @@
 
 import vine from "@vinejs/vine";
 
+const roles = () => vine.enum(["USER", "ORGANIZER", "ADMIN"]);
+
 const profile = {
     first_name: vine.string().trim().minLength(1).maxLength(50).optional(),
     last_name: vine.string().trim().minLength(1).maxLength(50).optional(),
@@ -108,7 +110,7 @@ const loginValidator = vine.create(vine.object({
 }));
 
 const filterUserValidator = vine.create(vine.object({
-    role_name: vine.enum(["USER", "ORGANIZER", "ADMIN"]).optional(),
+    role_name: vine.array(roles()).optional(),
     is_active: vine.boolean().optional()
 }));
 

@@ -44,7 +44,7 @@
  *                                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  */
 
-import prisma from "../database/databaseORM.js";
+import prisma from "../database/database.js";
 import * as userModel from "../models/user.js";
 import jwt from "jsonwebtoken";
 import {hash, verify} from "../utils/hash.js";

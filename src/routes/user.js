@@ -255,8 +255,8 @@ import {
     updateUser,
     updateMe,
     deleteUser,
-} from "../controllers/userORM.js";
-import {getMyEvents} from "../controllers/eventORM.js";
+} from "../controllers/user.js";
+import {getMyEvents} from "../controllers/event.js";
 
 const router = Router();
 
