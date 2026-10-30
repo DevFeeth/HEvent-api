@@ -365,7 +365,7 @@ CREATE INDEX idx_orders_user ON orders(user_id);
 INSERT INTO users (email, first_name, last_name, password_hash, address, postal_code, city, role_name)
 VALUES ('user@mail.com','Ulysse','User',
         '$argon2id$v=19$m=65536,p=4,t=3$dcn3iaqs459ikvq3YF3hyg$VkITkeewP5Vlzox07dohAZf/FwYeONhJsQidgbDPJo0',
-        'Avenue Roi Albert 79','5300','Andenne',
+        'Avenue Roi Joseph 18','5300','Andenne',
         DEFAULT),
 
        ('orga@mail.com', 'Olive', 'Orga',
@@ -375,5 +375,5 @@ VALUES ('user@mail.com','Ulysse','User',
 
        ('admin@mail.com', 'Adam', 'Admin',
         '$argon2id$v=19$m=65536,p=4,t=3$dcn3iaqs459ikvq3YF3hyg$VkITkeewP5Vlzox07dohAZf/FwYeONhJsQidgbDPJo0',
-        'Rue de la Résistance 8', '5300', 'Seilles',
+        'Rue de la Force 32', '5300', 'Seilles',
         'ADMIN');

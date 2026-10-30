@@ -2,8 +2,8 @@ export const readEvents = async (db, {status, category_name, organizer_id} = {})
     return await db.events.findMany({
         where: {
             status: Array.isArray(status) ? {in: status} : status,
-            category_name: category_name,
-            organizer_id: organizer_id
+            category_name,
+            organizer_id
         }
     });
 };

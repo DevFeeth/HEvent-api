@@ -1,5 +1,9 @@
 export const readRoles = async (db) => {
-    return await db.role.findMany();
+    return await db.role.findMany({
+        orderBy: {
+            name: "asc"
+        }
+    });
 };
 
 export const createRole = async (db, {name, label}) => {
@@ -18,10 +22,10 @@ export const createRole = async (db, {name, label}) => {
 export const updateRole = async (db, {name, label}) => {
     return await db.role.update({
         where: {
-            name: name
+            name
         },
         data: {
-            label: label
+            label
         }
     });
 };
@@ -29,7 +33,7 @@ export const updateRole = async (db, {name, label}) => {
 export const deleteRole = async (db, {name}) => {
     return await db.role.delete({
         where: {
-            name: name
+            name
         }
     });
 };

@@ -1,8 +1,8 @@
 export const readUsers = async (db, {role_name, is_active} = {}) => {
     return await db.users.findMany({
         where: {
-            role_name: role_name,
-            is_active: is_active
+            role_name,
+            is_active
         },
         omit: {
             password_hash: true
@@ -23,7 +23,9 @@ export const readUserById = async (db, {id}) => {
 
 export const readUserByEmail = async (db, {email}) => {
     return await db.users.findUnique({
-        where: {email}
+        where: {
+            email
+        }
     });
 };
 
