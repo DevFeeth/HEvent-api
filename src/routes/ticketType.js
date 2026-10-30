@@ -1,8 +1,8 @@
 /**
  * @swagger
- * /ticket-types/{id}:
+ * /ticket-types/{ticket_type_id}:
  *     patch:
- *         summary: Modifier un type de billet (organisateur propriétaire de l'événement ou administrateur)
+ *         summary: Update a ticket type (event owner organizer or administrator)
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -17,7 +17,7 @@
  *                         $ref: '#/components/schemas/TicketTypeToUpdate'
  *         responses:
  *             204:
- *                 description: Type de billet modifié
+ *                 description: Ticket type updated
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
  *             401:
@@ -31,8 +31,8 @@
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     delete:
- *         summary: Supprimer un type de billet (organisateur propriétaire de l'événement ou administrateur)
- *         description: Impossible si des billets de ce type ont été vendus
+ *         summary: Delete a ticket type (event owner organizer or administrator)
+ *         description: Not possible if tickets of this type have been sold
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -41,7 +41,7 @@
  *             - $ref: '#/components/parameters/Id'
  *         responses:
  *             204:
- *                 description: Type de billet supprimé
+ *                 description: Ticket type deleted
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
  *             401:

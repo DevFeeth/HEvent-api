@@ -17,14 +17,14 @@
  *                     nullable: true
  *                 start_date:
  *                     type: string
- *                     description: Seulement la partie date compte (AAAA-MM-JJ)
+ *                     description: Only the date part is relevant (YYYY-MM-DD)
  *                     example: "2026-12-26T00:00:00.000Z"
  *                 end_date:
  *                     type: string
  *                     example: "2026-12-27T00:00:00.000Z"
  *                 start_time:
  *                     type: string
- *                     description: Seulement la partie heure compte (HH:mm)
+ *                     description: Only the time part is relevant (HH:mm)
  *                     example: "2000-01-01T22:00:00.000Z"
  *                 end_time:
  *                     type: string
@@ -32,7 +32,7 @@
  *                 latitude:
  *                     type: string
  *                     nullable: true
- *                     description: Nombre décimal renvoyé sous forme de texte
+ *                     description: Decimal number returned as a string
  *                     example: "50.465000"
  *                 longitude:
  *                     type: string

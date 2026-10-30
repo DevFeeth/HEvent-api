@@ -6,14 +6,14 @@
  *             in: path
  *             name: event_id
  *             required: true
- *             description: Identifiant de l'événement
+ *             description: Event ID
  *             schema:
  *                 type: integer
  *                 minimum: 1
  *     schemas:
  *         TicketTypeToAdd:
  *             type: object
- *             description: L'événement est celui de l'URL. Le nom doit être unique au sein de l'événement
+ *             description: The event is the one in the URL. The name must be unique within the event
  *             properties:
  *                 name:
  *                     type: string
@@ -23,18 +23,18 @@
  *                 description:
  *                     type: string
  *                     maxLength: 500
- *                     example: Accès balcon avec une boisson offerte
+ *                     example: Balcony access with a free drink
  *                 price:
  *                     type: number
  *                     minimum: 0
  *                     maximum: 99999999.99
- *                     description: Prix en euros, maximum 2 décimales (0 pour un billet gratuit)
+ *                     description: Price in euros, up to 2 decimal places (0 for a free ticket)
  *                     example: 55.00
  *                 available_quantity:
  *                     type: integer
  *                     minimum: 0
  *                     maximum: 2147483647
- *                     description: Nombre de billets mis en vente
+ *                     description: Number of tickets put on sale
  *                     example: 200
  *             required:
  *                 - name
@@ -42,7 +42,7 @@
  *                 - available_quantity
  *         TicketTypeToUpdate:
  *             type: object
- *             description: Mêmes champs que TicketTypeToAdd, tous facultatifs (au moins un champ est requis). L'événement ne peut pas être changé
+ *             description: Same fields as TicketTypeToAdd, all optional (at least one field is required). The event cannot be changed
  *             properties:
  *                 name:
  *                     type: string
@@ -52,12 +52,12 @@
  *                 description:
  *                     type: string
  *                     maxLength: 500
- *                     example: Accès balcon, boisson et vestiaire offerts
+ *                     example: Balcony access, free drink and cloakroom
  *                 price:
  *                     type: number
  *                     minimum: 0
  *                     maximum: 99999999.99
- *                     description: Prix en euros, maximum 2 décimales
+ *                     description: Price in euros, up to 2 decimal places
  *                     example: 65.00
  *                 available_quantity:
  *                     type: integer
@@ -71,10 +71,6 @@ import vine from "@vinejs/vine";
 const id = () => vine.number().withoutDecimals().positive();
 const price = () => vine.number().range([0, 99999999.99]).decimal([0, 2]);
 const quantity = () => vine.number().withoutDecimals().range([0, 2147483647]);
-
-const eventIdValidator = vine.create(vine.object({
-    event_id: id()
-}));
 
 const addTicketTypeValidator = vine.create(vine.object({
     event_id: id(),
@@ -92,18 +88,9 @@ const updateTicketTypeValidator = vine.create(vine.object({
     available_quantity: quantity().optional()
 }));
 
-export const eventId = async (req, res, next) => {
-    try {
-        req.val = await eventIdValidator.validate(req.params);
-        next();
-    } catch (err) {
-        res.status(400).send(err.messages);
-    }
-};
-
 export const addTicketType = async (req, res, next) => {
     try {
-        req.val = await addTicketTypeValidator.validate({...req.body, event_id: req.params.event_id});
+        req.val = await addTicketTypeValidator.validate({...req.body, event_id: req.params.id});
         next();
     } catch (err) {
         res.status(400).send(err.messages);
@@ -114,7 +101,7 @@ export const updateTicketType = async (req, res, next) => {
     try {
         req.val = await updateTicketTypeValidator.validate({...req.body, id: req.params.id});
         if(Object.keys(req.val).length === 1){
-            return res.status(400).send("Aucun champ à modifier");
+            return res.status(400).send("No field to update");
         }
         next();
     } catch (err) {

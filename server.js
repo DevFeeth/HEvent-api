@@ -14,7 +14,7 @@ app.use("/api/v1", Router);
 
 app.use((req, res) => {
     req.log.warn(`Bad URL: ${req.path}`);
-    return res.status(404).send("Il ne s'agit pas d'une URL prise en charge par l'application");
+    return res.status(404).send("This URL is not supported by the application");
 });
 
 app.listen(port, () => {

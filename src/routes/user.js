@@ -2,7 +2,7 @@
  * @swagger
  * /users:
  *     get:
- *         summary: Récupérer la liste des utilisateurs (pour les admins)
+ *         summary: Get the list of users (admins only)
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -13,15 +13,15 @@
  *               schema:
  *                   type: string
  *                   enum: [USER, ORGANIZER, ADMIN]
- *               description: Permet de filtrer par rôle
+ *               description: Filter by role
  *             - in: query
  *               name: is_active
  *               schema:
  *                   type: boolean
- *               description: Permet de filtrer les comptes activés/désactivés
+ *               description: Filter active or deactivated accounts
  *         responses:
  *             200:
- *                 description: La liste des utilisateurs (sans le hash du mot de passe)
+ *                 description: The list of users (without the password hash)
  *                 content:
  *                     application/json:
  *                         schema:
@@ -37,7 +37,7 @@
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     post:
- *         summary: Inscription (crée un compte USER)
+ *         summary: Register (creates a USER account)
  *         tags:
  *             - User
  *         requestBody:
@@ -61,7 +61,7 @@
  * @swagger
  * /users/login:
  *     post:
- *         summary: Connexion => renvoie un JWT valable 24 heures
+ *         summary: Log in, returns a JWT valid for 24 hours
  *         tags:
  *             - User
  *         requestBody:
@@ -76,7 +76,7 @@
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
  *             401:
- *                 description: Email ou mot de passe incorrect, ou compte désactivé
+ *                 description: Wrong email or password, or deactivated account
  *                 content:
  *                     text/plain:
  *                         schema:
@@ -90,14 +90,14 @@
  * @swagger
  * /users/me:
  *     get:
- *         summary: Profil de l'utilisateur connecté
+ *         summary: Profile of the logged-in user
  *         security:
  *             - bearerAuth: []
  *         tags:
  *             - User
  *         responses:
  *             200:
- *                 description: Les informations de profil (sans le hash du mot de passe)
+ *                 description: The profile information (without the password hash)
  *                 content:
  *                     application/json:
  *                         schema:
@@ -109,7 +109,7 @@
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     patch:
- *         summary: Modifier son profil ou son mot de passe
+ *         summary: Update your profile or password
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -122,7 +122,7 @@
  *                         $ref: '#/components/schemas/MeToUpdate'
  *         responses:
  *             204:
- *                 description: Profil modifié
+ *                 description: Profile updated
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
  *             401:
@@ -135,7 +135,7 @@
  * @swagger
  * /users/me/events:
  *     get:
- *         summary: Événements de l'organisateur connecté, brouillons compris
+ *         summary: Events of the logged-in organizer, drafts included
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -143,7 +143,7 @@
  *             - Event
  *         responses:
  *             200:
- *                 description: La liste de ses événements
+ *                 description: The list of their events
  *                 content:
  *                     application/json:
  *                         schema:
@@ -160,9 +160,9 @@
 
 /**
  * @swagger
- * /users/{id}:
+ * /users/{user_id}:
  *     get:
- *         summary: Détail d'un utilisateur (seulement pour les admins)
+ *         summary: Get user's details (admins only)
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -171,7 +171,7 @@
  *             - $ref: '#/components/parameters/Id'
  *         responses:
  *             200:
- *                 description: Les informations de l'utilisateur (sans le hash du mot de passe)
+ *                 description: The user's information (without the password hash)
  *                 content:
  *                     application/json:
  *                         schema:
@@ -187,7 +187,7 @@
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     patch:
- *         summary: Modifier un utilisateur, rôle et activation compris (seulement pour les admins)
+ *         summary: Update a user, including role and activation (admins only)
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -202,7 +202,7 @@
  *                         $ref: '#/components/schemas/UserToUpdate'
  *         responses:
  *             204:
- *                 description: Utilisateur modifié
+ *                 description: User updated
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
  *             401:
@@ -216,8 +216,8 @@
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     delete:
- *         summary: Supprimer un utilisateur (seulement pour les admins)
- *         description: Impossible s'il a des commandes, des billets ou des événements; (dans ce cas la => plutôt le désactiver)
+ *         summary: Delete a user (admins only)
+ *         description: Not possible if they have orders, tickets or events (deactivate the account instead)
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -226,7 +226,7 @@
  *             - $ref: '#/components/parameters/Id'
  *         responses:
  *             204:
- *                 description: Utilisateur supprimé
+ *                 description: User deleted
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
  *             401:

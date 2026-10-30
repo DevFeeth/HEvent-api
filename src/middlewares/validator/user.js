@@ -50,7 +50,7 @@
  *                 - password
  *         MeToUpdate:
  *             type: object
- *             description: Au moins un champ est requis
+ *             description: At least one field is required
  *             properties:
  *                 first_name:
  *                     type: string
@@ -75,7 +75,7 @@
  *                     minLength: 8
  *                     maxLength: 72
  *         UserToUpdate:
- *             description: Mêmes champs que MeToUpdate, + ceux réservés à l'administrateur (au moins un champ est requis)
+ *             description: Same fields as MeToUpdate, plus the admin-only ones (at least one field is required)
  *             allOf:
  *                 - $ref: '#/components/schemas/MeToUpdate'
  *                 - type: object
@@ -110,7 +110,7 @@ const loginValidator = vine.create(vine.object({
 }));
 
 const filterUserValidator = vine.create(vine.object({
-    role_name: vine.array(roles()).optional(),
+    role_name: roles().optional(),
     is_active: vine.boolean().optional()
 }));
 
@@ -129,7 +129,7 @@ const updateUserValidator = vine.create(vine.object({
     ...profile,
     email: vine.string().trim().toLowerCase().email().maxLength(254).optional(),
     is_active: vine.boolean().optional(),
-    role_name: vine.enum(["USER", "ORGANIZER", "ADMIN"]).optional()
+    role_name: roles().optional()
 }));
 
 const updateMeValidator = vine.create(vine.object({
@@ -167,7 +167,7 @@ export const updateUser = async (req, res, next) => {
     try {
         req.val = await updateUserValidator.validate({...req.body, id: req.params.id});
         if(Object.keys(req.val).length === 1){
-            return res.status(400).send("Aucun champ à modifier");
+            return res.status(400).send("No field to update");
         }
         next();
     } catch (err) {
@@ -179,7 +179,7 @@ export const updateMe = async (req, res, next) => {
     try {
         req.val = await updateMeValidator.validate(req.body ?? {});
         if(Object.keys(req.val).length === 0){
-            return res.status(400).send("Aucun champ à modifier");
+            return res.status(400).send("No field to update");
         }
         next();
     } catch (err) {

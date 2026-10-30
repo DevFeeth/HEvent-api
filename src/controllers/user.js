@@ -33,7 +33,7 @@
  *                     enum: [USER, ORGANIZER, ADMIN]
  *     responses:
  *         Token:
- *             description: Connexion réussie => le JWT est valable 24 heures
+ *             description: Login successful, the JWT is valid for 24 hours
  *             content:
  *                 application/json:
  *                     schema:
