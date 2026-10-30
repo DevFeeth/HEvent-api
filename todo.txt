@@ -1,0 +1,1 @@
+--> Delete quantity in event

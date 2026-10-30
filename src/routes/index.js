@@ -39,6 +39,7 @@ import prisma from "../database/database.js";
 import {Router} from 'express';
 import {default as userRouter} from "./user.js";
 import {default as eventRouter} from "./event.js";
+import {default as ticketTypeRouter} from "./ticketType.js";
 
 const router = Router();
 
@@ -54,5 +55,6 @@ router.get("/health", async (req, res) => {
 
 router.use("/users", userRouter);
 router.use("/events", eventRouter);
+router.use("/ticket-types", ticketTypeRouter);
 
 export default router;
