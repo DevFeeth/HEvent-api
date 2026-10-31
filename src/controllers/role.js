@@ -13,7 +13,7 @@
  *                     example: Organisateur
  *     responses:
  *         RoleAdded:
- *             description: Rôle créé, son nom est renvoyé
+ *             description: Role created, its name is returned
  *             content:
  *                 application/json:
  *                     schema:
@@ -60,7 +60,7 @@ export const updateRole = async (req, res) => {
 export const deleteRole = async (req, res) => {
     try {
         if(baseRole.includes(req.val.name)){
-            return res.sendStatus(409).send({error: "Les rôles de bases sont impossibles à supprimer."});
+            return res.status(409).send("Base roles cannot be deleted");
         }
         await roleModel.deleteRole(prisma, req.val);
         res.sendStatus(204);

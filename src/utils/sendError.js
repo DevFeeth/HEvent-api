@@ -1,17 +1,17 @@
 const statusFor = (err, method) => {
     switch(err.code){
         case "P2002":
-            return [409, "Cette valeur est déjà utilisée"];
+            return [409, "This value is already in use"];
         case "P2003":
             return method === "DELETE"
-                ? [409, "Suppression impossible : des données y sont liées"]
-                : [400, "Référence inexistante"];
+                ? [409, "Cannot delete: other data is linked to it"]
+                : [400, "Referenced resource does not exist"];
         case "P2039":
-            return [400, "Données incohérentes"];
+            return [400, "Inconsistent data"];
         case "P2025":
-            return [404, "Ressource introuvable"];
+            return [404, "Resource not found"];
         default:
-            return [500, "Erreur interne du serveur"];
+            return [500, "Internal server error"];
     }
 };
 

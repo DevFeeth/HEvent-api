@@ -14,18 +14,18 @@
  *                 description:
  *                     type: string
  *                     nullable: true
- *                     example: Accès aux deux journées du festival
+ *                     example: Access to both days of the festival
  *                 price:
  *                     type: string
- *                     description: Prix en euros, nombre décimal renvoyé sous forme de texte (sans les zéros inutiles, ex. "45" ou "22.5")
+ *                     description: Price in euros, decimal number returned as a string (without trailing zeros, e.g. "45" or "22.5")
  *                     example: "79.99"
  *                 available_quantity:
  *                     type: integer
- *                     description: Nombre de billets encore disponibles à la vente
+ *                     description: Number of tickets still available for sale
  *                     example: 1500
  *                 event_id:
  *                     type: integer
- *                     description: Identifiant de l'événement auquel appartient ce type de billet
+ *                     description: ID of the event this ticket type belongs to
  *                     example: 2
  */
 
@@ -39,7 +39,7 @@ const canManage = (session, event) =>
 
 export const getTicketTypeByEvent = async (req, res) => {
     try {
-        const event = await eventModel.readEventById(prisma, {id: req.val.event_id});
+        const event = await eventModel.readEventById(prisma, {id: req.val.id});
         if(!event || (event.status === "DRAFT" && !canManage(req.session, event))){
             return res.sendStatus(404);
         }

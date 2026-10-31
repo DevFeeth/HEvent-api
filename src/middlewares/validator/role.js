@@ -6,7 +6,7 @@
  *             in: path
  *             name: name
  *             required: true
- *             description: Nom du converti en majuscule
+ *             description: Role name, converted to uppercase
  *             schema:
  *                 type: string
  *                 pattern: '^[A-Za-z0-9_-]+$'

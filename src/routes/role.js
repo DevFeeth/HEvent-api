@@ -2,14 +2,14 @@
  * @swagger
  * /roles:
  *     get:
- *         summary: Récupére la liste des rôles (seulement pour les admins)
+ *         summary: Get the list of roles (admins only)
  *         security:
  *             - bearerAuth: []
  *         tags:
  *             - Role
  *         responses:
  *             200:
- *                 description: La liste des rôles
+ *                 description: The list of roles
  *                 content:
  *                     application/json:
  *                         schema:
@@ -23,7 +23,7 @@
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     post:
- *         summary: Créer un rôle (seulement pour les admins)
+ *         summary: Create a role (admins only)
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -51,7 +51,7 @@
  * @swagger
  * /roles/{name}:
  *     patch:
- *         summary: Modifier un rôle (seulement pour les admins)
+ *         summary: Update a role (admins only)
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -66,7 +66,7 @@
  *                         $ref: '#/components/schemas/RoleToUpdate'
  *         responses:
  *             204:
- *                 description: Rôle modifié
+ *                 description: Role updated
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
  *             401:
@@ -78,7 +78,7 @@
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     delete:
- *         summary: Supprimer un rôle (seulement pour les admins)
+ *         summary: Delete a role (admins only)
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -87,7 +87,7 @@
  *             - $ref: '#/components/parameters/RoleName'
  *         responses:
  *             204:
- *                 description: Rôle supprimé
+ *                 description: Role deleted
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
  *             401:

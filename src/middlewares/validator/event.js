@@ -4,7 +4,7 @@
  *     schemas:
  *         EventToAdd:
  *             type: object
- *             description: Dates et heures à l'heure de Bruxelles
+ *             description: Dates and times in Brussels time
  *             properties:
  *                 name:
  *                     type: string
@@ -62,7 +62,7 @@
  *                 - category_name
  *         EventToUpdate:
  *             type: object
- *             description: Mêmes champs que EventToAdd, tous facultatifs (au moins un champ est requis)
+ *             description: Same fields as EventToAdd, all optional (at least one field is required)
  *             properties:
  *                 name:
  *                     type: string
@@ -160,8 +160,8 @@ export const filterEvent = async (req, res, next) => {
         }
         req.val = await filterEventValidator.validate(query);
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };
 
@@ -169,8 +169,8 @@ export const addEvent = async (req, res, next) => {
     try {
         req.val = await addEventValidator.validate(req.body ?? {});
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };
 
@@ -178,10 +178,10 @@ export const updateEvent = async (req, res, next) => {
     try {
         req.val = await updateEventValidator.validate({...req.body, id: req.params.id});
         if(Object.keys(req.val).length === 1){
-            return res.status(400).send("Aucun champ à modifier");
+            return res.status(400).send("No field to update");
         }
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };

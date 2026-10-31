@@ -46,7 +46,7 @@ CREATE TABLE category (
 INSERT INTO category (name, label) VALUES
     ('CONCERT', 'Concert'),
     ('FESTIVAL', 'Festival'),
-    ('PARTY', 'Soirée');
+    ('PARTY', 'Party');
 
 
 -- =========================================================
@@ -65,9 +65,9 @@ CREATE TABLE role (
 );
 
 INSERT INTO role (name, label) VALUES
-    ('USER', 'Utilisateur'),
-    ('ORGANIZER', 'Organisateur'),
-    ('ADMIN', 'Administrateur');
+    ('USER', 'User'),
+    ('ORGANIZER', 'Organizer'),
+    ('ADMIN', 'Administrator');
 
 
 -- =========================================================

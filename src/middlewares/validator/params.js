@@ -6,13 +6,13 @@
  *             in: path
  *             name: id
  *             required: true
- *             description: Identifiant de la ressource
+ *             description: Resource ID
  *             schema:
  *                 type: integer
  *                 minimum: 1
  *     responses:
  *         ValidationError:
- *             description: Données invalides ou aucun champ à modifier
+ *             description: Invalid data or no field to update
  *             content:
  *                 application/json:
  *                     schema:
@@ -32,7 +32,7 @@
  *                 text/plain:
  *                     schema:
  *                         type: string
- *                         example: Aucun champ à modifier
+ *                         example: No field to update
  */
 
 import vine from "@vinejs/vine";
@@ -45,7 +45,7 @@ export const id = async (req, res, next) => {
     try {
         req.val = await idValidator.validate(req.params);
         next();
-    } catch (e) {
-        res.status(400).send(e.messages);
+    } catch (err) {
+        res.status(400).send(err.messages);
     }
 };

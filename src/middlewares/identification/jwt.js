@@ -8,7 +8,7 @@
  *             bearerFormat: JWT
  *     responses:
  *         UnauthorizedError:
- *             description: Token absent, invalide ou expiré
+ *             description: Missing, invalid or expired token
  *             content:
  *                 text/plain:
  *                     schema:

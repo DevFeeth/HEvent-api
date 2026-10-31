@@ -3,14 +3,14 @@
  * components:
  *     responses:
  *         MustBeAdmin:
- *             description: L'action doit être réalisée par un administrateur
+ *             description: The action must be performed by an administrator
  *             content:
  *                 text/plain:
  *                     schema:
  *                         type: string
  *                         example: Forbidden
  *         MustBeOrganizer:
- *             description: L'action doit être réalisée par l'organisateur propriétaire de l'événement (ou un administrateur)
+ *             description: The action must be performed by the organizer who owns the event (or an administrator)
  *             content:
  *                 text/plain:
  *                     schema:

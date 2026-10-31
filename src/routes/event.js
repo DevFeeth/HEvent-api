@@ -2,8 +2,8 @@
  * @swagger
  * /events:
  *     get:
- *         summary: Récupére la liste des événements
- *         description: Les brouillons (status = DRAFT) ne sont visibles que par l'administrateur
+ *         summary: Get the list of events
+ *         description: Drafts (status = DRAFT) are only visible to administrators
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -11,7 +11,7 @@
  *         parameters:
  *             - in: query
  *               name: status
- *               description: Un ou plusieurs statuts, séparés par des virgules (ex. PUBLISHED,CANCELLED)
+ *               description: One or more statuses, comma-separated (e.g. PUBLISHED,CANCELLED)
  *               style: form
  *               explode: false
  *               schema:
@@ -21,19 +21,19 @@
  *                       enum: [DRAFT, PUBLISHED, CANCELLED, FINISHED]
  *             - in: query
  *               name: category_name
- *               description: Permet de filtrer par catégorie
+ *               description: Filter by category
  *               schema:
  *                   type: string
  *                   example: party
  *             - in: query
  *               name: organizer_id
- *               description: Permet de filtrer par organisateur
+ *               description: Filter by organizer
  *               schema:
  *                   type: integer
  *                   minimum: 1
  *         responses:
  *             200:
- *                 description: La liste des événements
+ *                 description: The list of events
  *                 content:
  *                     application/json:
  *                         schema:
@@ -47,8 +47,8 @@
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     post:
- *         summary: Créer un événement (seulement pour les organisateurs (admins compris))
- *         description: L'organisateur est l'utilisateur connecté
+ *         summary: Create an event (organizers only, admins included)
+ *         description: The organizer is the logged-in user
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -76,8 +76,8 @@
  * @swagger
  * /events/{id}:
  *     get:
- *         summary: Récupére les détails d'un événement
- *         description: Un brouillon n'est visible que par son organisateur ou un administrateur
+ *         summary: Get the details of an event
+ *         description: A draft is only visible to its organizer or an administrator
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -86,7 +86,7 @@
  *             - $ref: '#/components/parameters/Id'
  *         responses:
  *             200:
- *                 description: Les détails de l'événement
+ *                 description: The event details
  *                 content:
  *                     application/json:
  *                         schema:
@@ -102,7 +102,7 @@
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     patch:
- *         summary: Modifier un événement (organisateur propriétaire ou administrateur)
+ *         summary: Update an event (owner organizer or administrator)
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -117,7 +117,7 @@
  *                         $ref: '#/components/schemas/EventToUpdate'
  *         responses:
  *             204:
- *                 description: Événement modifié
+ *                 description: Event updated
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
  *             401:
@@ -129,8 +129,8 @@
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     delete:
- *         summary: Supprimer un événement (organisateur propriétaire ou administrateur)
- *         description: Impossible s'il a des billets vendus
+ *         summary: Delete an event (owner organizer or administrator)
+ *         description: Not possible if it has sold tickets
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -139,7 +139,7 @@
  *             - $ref: '#/components/parameters/Id'
  *         responses:
  *             204:
- *                 description: Événement supprimé
+ *                 description: Event deleted
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
  *             401:
@@ -158,17 +158,18 @@
  * @swagger
  * /events/{event_id}/ticket-types:
  *     get:
- *         summary: Récupére les types de billets d'un événement (triés par prix croissant)
- *         description: Ceux d'un brouillon ne sont visibles que par son organisateur ou un administrateur
+ *         summary: Get the ticket types of an event (sorted by ascending price)
+ *         description: Those of a draft are only visible to its organizer or an administrator
  *         security:
  *             - bearerAuth: []
  *         tags:
+ *             - Event
  *             - TicketType
  *         parameters:
  *             - $ref: '#/components/parameters/EventId'
  *         responses:
  *             200:
- *                 description: La liste des types de billets
+ *                 description: The list of ticket types
  *                 content:
  *                     application/json:
  *                         schema:
@@ -184,10 +185,11 @@
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     post:
- *         summary: Créer un type de billet (organisateur propriétaire de l'événement ou administrateur)
+ *         summary: Create a ticket type (event owner organizer or administrator)
  *         security:
  *             - bearerAuth: []
  *         tags:
+ *             - Event
  *             - TicketType
  *         parameters:
  *             - $ref: '#/components/parameters/EventId'
@@ -242,7 +244,7 @@ router.patch("/:id", checkJWT, mustBe.organizer, eventValidator.updateEvent, upd
 
 router.delete("/:id", checkJWT, mustBe.organizer, paramsValidator.id, deleteEvent);
 
-router.get("/:event_id/ticket-types", checkJWT, ticketTypeValidator.eventId, getTicketTypeByEvent);
-router.post("/:event_id/ticket-types", checkJWT, mustBe.organizer, ticketTypeValidator.addTicketType, addTicketType);
+router.get("/:id/ticket-types", checkJWT, paramsValidator.id, getTicketTypeByEvent);
+router.post("/:id/ticket-types", checkJWT, mustBe.organizer, ticketTypeValidator.addTicketType, addTicketType);
 
 export default router;
