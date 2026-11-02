@@ -60,3 +60,4 @@ export const deletePromoCode = async (db, {id}) => {
         }
     });
 };
+
