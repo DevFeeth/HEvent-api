@@ -18,7 +18,7 @@
  *             type: object
  *             properties:
  *                 name:
- *                     description: Converti en majuscule
+ *                     description: Converted to uppercase
  *                     type: string
  *                     pattern: '^[A-Za-z0-9_-]+$'
  *                     minLength: 1
@@ -45,7 +45,7 @@
  */
 import vine from "@vinejs/vine";
 
-const name = () => vine.string().trim().toUpperCase().regex(/^[A-Z0-9_-]+$/).minLength(1).maxLength(25);
+const name = () => vine.string().trim().toUpperCase().regex(/^[A-Za-z0-9_-]+$/).minLength(1).maxLength(25);
 
 const updateOrAddRoleValidator = vine.create(vine.object({
     name: name(),
@@ -81,4 +81,4 @@ export const nameRole = async (req, res, next) => {
     } catch (err) {
         res.status(400).send(err.messages);
     }
-}
+};

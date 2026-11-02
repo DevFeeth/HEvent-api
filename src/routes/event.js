@@ -156,7 +156,7 @@
 
 /**
  * @swagger
- * /events/{event_id}/ticket-types:
+ * /events/{id}/ticket-types:
  *     get:
  *         summary: Get the ticket types of an event (sorted by ascending price)
  *         description: Those of a draft are only visible to its organizer or an administrator
@@ -216,77 +216,12 @@
  *                 $ref: '#/components/responses/ServerError'
  */
 
-/**
- * @swagger
- * /events/{event_id}/promo-codes:
- *     get:
- *         summary: Get the promo codes of an event (event owner organizer or administrator)
- *         description: Active codes first, then the ones ending the soonest
- *         security:
- *             - bearerAuth: []
- *         tags:
- *             - Event
- *             - PromoCode
- *         parameters:
- *             - $ref: '#/components/parameters/EventId'
- *         responses:
- *             200:
- *                 description: The list of promo codes
- *                 content:
- *                     application/json:
- *                         schema:
- *                             type: array
- *                             items:
- *                                 $ref: '#/components/schemas/PromoCode'
- *             400:
- *                 $ref: '#/components/responses/ValidationError'
- *             401:
- *                 $ref: '#/components/responses/UnauthorizedError'
- *             403:
- *                 $ref: '#/components/responses/MustBeOrganizer'
- *             404:
- *                 $ref: '#/components/responses/NotFound'
- *             500:
- *                 $ref: '#/components/responses/ServerError'
- *     post:
- *         summary: Create a promo code (event owner organizer or administrator)
- *         security:
- *             - bearerAuth: []
- *         tags:
- *             - Event
- *             - PromoCode
- *         parameters:
- *             - $ref: '#/components/parameters/EventId'
- *         requestBody:
- *             required: true
- *             content:
- *                 application/json:
- *                     schema:
- *                         $ref: '#/components/schemas/PromoCodeToAdd'
- *         responses:
- *             201:
- *                 $ref: '#/components/responses/Created'
- *             400:
- *                 $ref: '#/components/responses/ValidationError'
- *             401:
- *                 $ref: '#/components/responses/UnauthorizedError'
- *             403:
- *                 $ref: '#/components/responses/MustBeOrganizer'
- *             404:
- *                 $ref: '#/components/responses/NotFound'
- *             409:
- *                 $ref: '#/components/responses/Conflict'
- *             500:
- *                 $ref: '#/components/responses/ServerError'
- */
-
-import Router from 'express';
+import {Router} from 'express';
 import { checkJWT } from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as eventValidator from "../middlewares/validator/event.js";
 import * as paramsValidator from "../middlewares/validator/params.js";
 import * as ticketTypeValidator from "../middlewares/validator/ticketType.js";
-import * as promoCodeValidator from "../middlewares/validator/promoCode.js";
 import {
     getEvents,
     getEventById,
@@ -298,10 +233,6 @@ import {
     getTicketTypeByEvent,
     addTicketType,
 } from "../controllers/ticketType.js";
-import {
-    getPromoCodesByEvent,
-    addPromoCode,
-} from "../controllers/promoCode.js";
 
 const router = Router();
 
@@ -315,8 +246,5 @@ router.delete("/:id", checkJWT, mustBe.organizer, paramsValidator.id, deleteEven
 
 router.get("/:id/ticket-types", checkJWT, paramsValidator.id, getTicketTypeByEvent);
 router.post("/:id/ticket-types", checkJWT, mustBe.organizer, ticketTypeValidator.addTicketType, addTicketType);
-
-router.get("/:id/promo-codes", checkJWT, mustBe.organizer, paramsValidator.id, getPromoCodesByEvent);
-router.post("/:id/promo-codes", checkJWT, mustBe.organizer, promoCodeValidator.addPromoCode, addPromoCode);
 
 export default router;
