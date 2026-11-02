@@ -59,6 +59,7 @@ router.use("/users", userRouter);
 router.use("/events", eventRouter);
 router.use("/ticket-types", ticketTypeRouter);
 router.use("/roles", roleRouter);
+router.use("/categories", roleRouter);
 router.use("/promo-codes", promoCodeRouter);
 
 export default router;
