@@ -160,7 +160,7 @@
 
 /**
  * @swagger
- * /users/{user_id}:
+ * /users/{id}:
  *     get:
  *         summary: Get user's details (admins only)
  *         security:
@@ -241,7 +241,7 @@
  *                 $ref: '#/components/responses/ServerError'
  */
 
-import Router from 'express';
+import {Router} from 'express';
 import { checkJWT } from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as userValidator from "../middlewares/validator/user.js";

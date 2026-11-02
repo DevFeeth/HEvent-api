@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /ticket-types/{ticket_type_id}:
+ * /ticket-types/{id}:
  *     patch:
  *         summary: Update a ticket type (event owner organizer or administrator)
  *         security:
@@ -56,7 +56,7 @@
  *                 $ref: '#/components/responses/ServerError'
  */
 
-import Router from 'express';
+import {Router} from 'express';
 import { checkJWT } from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as ticketTypeValidator from "../middlewares/validator/ticketType.js";

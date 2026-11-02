@@ -156,7 +156,7 @@
 
 /**
  * @swagger
- * /events/{event_id}/ticket-types:
+ * /events/{id}/ticket-types:
  *     get:
  *         summary: Get the ticket types of an event (sorted by ascending price)
  *         description: Those of a draft are only visible to its organizer or an administrator
@@ -216,7 +216,7 @@
  *                 $ref: '#/components/responses/ServerError'
  */
 
-import Router from 'express';
+import {Router} from 'express';
 import { checkJWT } from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as eventValidator from "../middlewares/validator/event.js";

@@ -43,6 +43,8 @@
  *                 $ref: '#/components/responses/UnauthorizedError'
  *             403:
  *                 $ref: '#/components/responses/MustBeAdmin'
+ *             409:
+ *                 $ref: '#/components/responses/Conflict'
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  */
@@ -102,7 +104,7 @@
  *                 $ref: '#/components/responses/ServerError'
  */
 
-import Router from 'express';
+import {Router} from 'express';
 import { checkJWT } from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as roleValidator from "../middlewares/validator/role.js";
