@@ -85,7 +85,6 @@ import {today} from "../utils/eventDate.js";
 
 const MAX_AMOUNT_IN_CENTS = 9999999999;
 const ORDER_LIFETIME_IN_MS = 15 * 60 * 1000;
-// Orders of the same event wait for each other because of the capacity lock
 const TRANSACTION_OPTIONS = {maxWait: 10000, timeout: 15000};
 
 class OrderRefusal extends Error {
@@ -99,7 +98,6 @@ const toCents = (amount) => Math.round(Number(amount) * 100);
 const toEuros = (cents) => cents / 100;
 
 const discountInCents = async (tx, {code, event_id, subtotal}) => {
-    // Locked until the end of the transaction, so that max_uses cannot be exceeded by simultaneous orders
     const promoCode = await promoCodeModel.lockPromoCodeByCode(tx, {code});
     const now = new Date();
     if(!promoCode || promoCode.event_id !== event_id || !promoCode.is_active || now < promoCode.start_at || now > promoCode.end_at){
@@ -118,7 +116,6 @@ const discountInCents = async (tx, {code, event_id, subtotal}) => {
 };
 
 const createOrderWithTickets = async (tx, {items, promo_code, user_id}) => {
-    // Always the same order of updates, so that two simultaneous orders cannot deadlock
     const sortedItems = items.toSorted((a, b) => a.ticket_type_id - b.ticket_type_id);
     const ticketTypes = await ticketTypeModel.readTicketTypesByIds(tx, {ids: sortedItems.map(item => item.ticket_type_id)});
     if(ticketTypes.length !== sortedItems.length){
@@ -128,7 +125,6 @@ const createOrderWithTickets = async (tx, {items, promo_code, user_id}) => {
         throw new OrderRefusal(400, "All the tickets of an order must belong to the same event");
     }
 
-    // Locked until the end of the transaction, so that the capacity cannot be exceeded by simultaneous orders
     const event = await eventModel.lockEventById(tx, {id: ticketTypes[0].event_id});
     if(event.status !== "PUBLISHED" || event.end_date < today()){
         throw new OrderRefusal(409, "This event is not open for sale");
@@ -152,7 +148,6 @@ const createOrderWithTickets = async (tx, {items, promo_code, user_id}) => {
     const orderId = await orderModel.createOrder(tx, {
         subtotal: toEuros(subtotal),
         discount_amount: toEuros(promo.discount),
-        // Nothing to charge: as Stripe does not handle free payments, the order is paid right away
         status: total === 0 ? "PAID" : "PENDING",
         user_id,
         promo_code_id: promo.id
@@ -166,7 +161,6 @@ const createOrderWithTickets = async (tx, {items, promo_code, user_id}) => {
             ticket_type_id,
             order_id: orderId,
             owner_id: user_id,
-            // The discount is shared between the tickets: the sum can differ from the total by a few cents
             purchase_price: toEuros(subtotal === 0 ? 0 : Math.round(priceOf(ticket_type_id) * total / subtotal)),
             quantity
         });
@@ -178,7 +172,6 @@ const cancelPendingOrder = async (tx, {id}) => {
     if(!await orderModel.changePendingOrderStatus(tx, {id, status: "CANCELLED"})){
         return false;
     }
-    // Only the tickets that were still valid go back on sale
     const tickets = await ticketModel.cancelTicketsByOrderId(tx, {order_id: id});
     for(const {ticket_type_id} of tickets.toSorted((a, b) => a.ticket_type_id - b.ticket_type_id)){
         await ticketTypeModel.increaseAvailableQuantity(tx, {id: ticket_type_id, quantity: 1});
@@ -195,7 +188,7 @@ export const releaseExpiredOrders = async () => {
 };
 
 export const syncPendingOrderAmounts = async (tx, {id}) => {
-    const order = await orderModel.lockOrderById(tx, {id});
+    const order = await orderModel.readOrderById(tx, {id});
     if(order.status !== "PENDING"){
         return;
     }

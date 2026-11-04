@@ -93,7 +93,7 @@
 
 import vine from "@vinejs/vine";
 
-const roles = () => vine.enum(["USER", "ORGANIZER", "ADMIN"]);
+const roles = () => vine.string().trim().toUpperCase().maxLength(25)
 
 const profile = {
     first_name: vine.string().trim().minLength(1).maxLength(50).optional(),

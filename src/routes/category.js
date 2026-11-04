@@ -99,7 +99,7 @@
  */
 
 import {Router} from 'express';
-import { checkJWT } from "../middlewares/identification/jwt.js";
+import {checkJWT, optionalJWT} from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as categoryValidator from "../middlewares/validator/category.js";
 import {

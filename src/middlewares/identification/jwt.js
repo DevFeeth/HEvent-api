@@ -31,7 +31,6 @@ const readPayload = (token) => {
     }
 };
 
-// The role and the activation come from the database: a change applies at once, without waiting for the token to expire
 const openSession = async (header) => {
     const id = header?.startsWith("Bearer ") ? readPayload(header.slice(7))?.id : undefined;
     if(!Number.isInteger(id) || id < 1 || id > MAX_ID){
@@ -55,7 +54,6 @@ export const checkJWT = async (req, res, next) => {
     next();
 };
 
-// For public routes: no token is fine, but a token that was sent must be valid
 export const optionalJWT = async (req, res, next) => {
     if(!req.get("Authorization")){
         return next();

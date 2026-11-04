@@ -5,9 +5,6 @@ const details = {
         }
     },
     ticket: {
-        omit: {
-            public_token: true
-        },
         include: {
             ticket_type: {
                 select: {
