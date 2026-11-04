@@ -23,6 +23,7 @@ services:
       DATABASE_URL: postgresql://${USERDB}:${PASSWORDDB}@db:5432/${DBNAME}
       PEPPER: ${PEPPER:?Missing PEPPER variable in .env}
       JWT_SECRET: ${JWT_SECRET:?Missing JWT_SECRET variable in .env}
+      QR_SECRET: ${QR_SECRET:?Missing QR_SECRET variable in .env}
     ports:
       - "3001:3001"
     depends_on:

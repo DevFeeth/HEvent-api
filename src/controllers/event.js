@@ -54,12 +54,16 @@
 
 import prisma from "../database/database.js";
 import * as eventModel from "../models/event.js";
+import * as ticketModel from "../models/ticket.js";
 import {sendError} from "../utils/sendError.js";
+import {today} from "../utils/eventDate.js";
+
+const hasPastDate = ({start_date, end_date}) => start_date < today() || end_date < today();
 
 export const getEvents = async (req, res) => {
     try {
         const filters = {...req.val};
-        if(req.session.role !== "ADMIN"){
+        if(req.session?.role !== "ADMIN"){
             filters.status = (filters.status ?? ["PUBLISHED", "CANCELLED", "FINISHED"])
                 .filter(s => s !== "DRAFT");
             if(filters.status.length === 0){
@@ -85,7 +89,7 @@ export const getMyEvents = async (req, res) => {
 export const getEventById = async (req, res) => {
     try {
         const event = await eventModel.readEventById(prisma, {id: req.val.id});
-        const canSeeDraft = req.session.role === "ADMIN" || event?.organizer_id === req.session.id;
+        const canSeeDraft = req.session?.role === "ADMIN" || (req.session && event?.organizer_id === req.session.id);
         if(event && (event.status !== "DRAFT" || canSeeDraft)){
             res.send(event);
         } else {
@@ -98,6 +102,9 @@ export const getEventById = async (req, res) => {
 
 export const addEvent = async (req, res) => {
     try {
+        if(hasPastDate(req.val)){
+            return res.status(400).send("The dates of an event cannot be in the past");
+        }
         const id = await eventModel.createEvent(prisma, {
             ...req.val, organizer_id: req.session.id
         });
@@ -117,7 +124,26 @@ export const updateEvent = async (req, res) => {
         if(req.session.role !== "ADMIN" && event.organizer_id !== req.session.id){
             return res.sendStatus(403);
         }
-        await eventModel.updateEvent(prisma, fields);
+        if(hasPastDate(fields)){
+            return res.status(400).send("The dates of an event cannot be in the past");
+        }
+        const refusal = await prisma.$transaction(async (tx) => {
+            if(fields.capacity !== undefined || fields.status === "DRAFT"){
+                await eventModel.lockEventById(tx, {id: fields.id});
+                const sold = await ticketModel.countActiveTicketsByEventId(tx, {event_id: fields.id});
+                if(fields.capacity < sold){
+                    return "The capacity cannot be lower than the number of tickets already sold";
+                }
+                if(fields.status === "DRAFT" && sold > 0){
+                    return "An event with tickets sold cannot go back to draft";
+                }
+            }
+            await eventModel.updateEvent(tx, fields);
+            return null;
+        });
+        if(refusal){
+            return res.status(409).send(refusal);
+        }
         res.sendStatus(204);
     } catch (err) {
         sendError(req, res, err);

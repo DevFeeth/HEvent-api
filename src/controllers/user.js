@@ -46,7 +46,7 @@
 
 import prisma from "../database/database.js";
 import * as userModel from "../models/user.js";
-import jwt from "jsonwebtoken";
+import {signSessionToken} from "../utils/sessionToken.js";
 import {hash, verify} from "../utils/hash.js";
 import {sendError} from "../utils/sendError.js";
 
@@ -138,11 +138,7 @@ export const loginUser = async (req, res) => {
     try {
         const user = await userModel.readUserByEmail(prisma, {email: req.val.email});
         if (user && user.is_active && await verify(user.password_hash, req.val.password)) {
-            const token = jwt.sign(
-                {id: user.id, role: user.role_name},
-                process.env.JWT_SECRET,
-                {expiresIn: "24h"}
-            );
+            const token = signSessionToken({id: user.id, role: user.role_name});
             res.send({token});
         } else {
             res.sendStatus(401);

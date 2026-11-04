@@ -5,6 +5,7 @@
  *         summary: Get the list of events
  *         description: Drafts (status = DRAFT) are only visible to administrators
  *         security:
+ *             - {}
  *             - bearerAuth: []
  *         tags:
  *             - Event
@@ -79,6 +80,7 @@
  *         summary: Get the details of an event
  *         description: A draft is only visible to its organizer or an administrator
  *         security:
+ *             - {}
  *             - bearerAuth: []
  *         tags:
  *             - Event
@@ -126,6 +128,13 @@
  *                 $ref: '#/components/responses/MustBeOrganizer'
  *             404:
  *                 $ref: '#/components/responses/NotFound'
+ *             409:
+ *                 description: The capacity is lower than the number of tickets already sold, or an event with tickets sold goes back to draft
+ *                 content:
+ *                     text/plain:
+ *                         schema:
+ *                             type: string
+ *                             example: The capacity cannot be lower than the number of tickets already sold
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     delete:
@@ -161,6 +170,7 @@
  *         summary: Get the ticket types of an event (sorted by ascending price)
  *         description: Those of a draft are only visible to its organizer or an administrator
  *         security:
+ *             - {}
  *             - bearerAuth: []
  *         tags:
  *             - Event
@@ -216,12 +226,115 @@
  *                 $ref: '#/components/responses/ServerError'
  */
 
+/**
+ * @swagger
+ * /events/{id}/tickets:
+ *     get:
+ *         summary: Get the tickets sold for an event (event owner organizer or administrator)
+ *         security:
+ *             - bearerAuth: []
+ *         tags:
+ *             - Event
+ *             - Ticket
+ *         parameters:
+ *             - $ref: '#/components/parameters/Id'
+ *             - in: query
+ *               name: status
+ *               schema:
+ *                   type: string
+ *                   enum: [VALID, USED, CANCELLED]
+ *               description: Filter by ticket status
+ *         responses:
+ *             200:
+ *                 description: The list of tickets, with their type and owner
+ *                 content:
+ *                     application/json:
+ *                         schema:
+ *                             type: array
+ *                             items:
+ *                                 $ref: '#/components/schemas/EventTicket'
+ *             400:
+ *                 $ref: '#/components/responses/ValidationError'
+ *             401:
+ *                 $ref: '#/components/responses/UnauthorizedError'
+ *             403:
+ *                 $ref: '#/components/responses/MustBeOrganizer'
+ *             404:
+ *                 $ref: '#/components/responses/NotFound'
+ *             500:
+ *                 $ref: '#/components/responses/ServerError'
+ */
+
+/**
+ * @swagger
+ * /events/{id}/promo-codes:
+ *     get:
+ *         summary: Get the promo codes of an event (event owner organizer or administrator)
+ *         security:
+ *             - bearerAuth: []
+ *         tags:
+ *             - PromoCode
+ *         parameters:
+ *             - $ref: '#/components/parameters/Id'
+ *         responses:
+ *             200:
+ *                 description: The list of promo codes
+ *                 content:
+ *                     application/json:
+ *                         schema:
+ *                             type: array
+ *                             items:
+ *                                 $ref: '#/components/schemas/PromoCode'
+ *             400:
+ *                 $ref: '#/components/responses/ValidationError'
+ *             401:
+ *                 $ref: '#/components/responses/UnauthorizedError'
+ *             403:
+ *                 $ref: '#/components/responses/MustBeOrganizer'
+ *             404:
+ *                 $ref: '#/components/responses/NotFound'
+ *             500:
+ *                 $ref: '#/components/responses/ServerError'
+ *     post:
+ *         summary: Create a promo code (event owner organizer or administrator)
+ *         description: The code is unique across all events
+ *         security:
+ *             - bearerAuth: []
+ *         tags:
+ *             - PromoCode
+ *         parameters:
+ *             - $ref: '#/components/parameters/Id'
+ *         requestBody:
+ *             required: true
+ *             content:
+ *                 application/json:
+ *                     schema:
+ *                         $ref: '#/components/schemas/PromoCodeToAdd'
+ *         responses:
+ *             201:
+ *                 $ref: '#/components/responses/Created'
+ *             400:
+ *                 $ref: '#/components/responses/ValidationError'
+ *             401:
+ *                 $ref: '#/components/responses/UnauthorizedError'
+ *             403:
+ *                 $ref: '#/components/responses/MustBeOrganizer'
+ *             404:
+ *                 $ref: '#/components/responses/NotFound'
+ *             409:
+ *                 $ref: '#/components/responses/Conflict'
+ *             500:
+ *                 $ref: '#/components/responses/ServerError'
+ */
+
 import {Router} from 'express';
-import { checkJWT } from "../middlewares/identification/jwt.js";
+import { checkJWT, optionalJWT } from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as eventValidator from "../middlewares/validator/event.js";
 import * as paramsValidator from "../middlewares/validator/params.js";
 import * as ticketTypeValidator from "../middlewares/validator/ticketType.js";
+import * as ticketValidator from "../middlewares/validator/ticket.js";
+import * as promoCodeValidator from "../middlewares/validator/promoCode.js";
 import {
     getEvents,
     getEventById,
@@ -234,17 +347,28 @@ import {
     addTicketType,
 } from "../controllers/ticketType.js";
 
+import {getTicketsByEvent} from "../controllers/ticket.js";
+import {
+    getPromoCodesByEvent,
+    addPromoCode,
+} from "../controllers/promoCode.js";
+
 const router = Router();
 
-router.get("/", checkJWT, eventValidator.filterEvent, getEvents);
-router.get("/:id", checkJWT, paramsValidator.id, getEventById);
+router.get("/", optionalJWT, eventValidator.filterEvent, getEvents);
+router.get("/:id", optionalJWT, paramsValidator.id, getEventById);
 
 router.post("/", checkJWT, mustBe.organizer, eventValidator.addEvent, addEvent);
 router.patch("/:id", checkJWT, mustBe.organizer, eventValidator.updateEvent, updateEvent);
 
 router.delete("/:id", checkJWT, mustBe.organizer, paramsValidator.id, deleteEvent);
 
-router.get("/:id/ticket-types", checkJWT, paramsValidator.id, getTicketTypeByEvent);
+router.get("/:id/ticket-types", optionalJWT, paramsValidator.id, getTicketTypeByEvent);
 router.post("/:id/ticket-types", checkJWT, mustBe.organizer, ticketTypeValidator.addTicketType, addTicketType);
+
+router.get("/:id/tickets", checkJWT, mustBe.organizer, ticketValidator.filterEventTickets, getTicketsByEvent);
+
+router.get("/:id/promo-codes", checkJWT, mustBe.organizer, paramsValidator.id, getPromoCodesByEvent);
+router.post("/:id/promo-codes", checkJWT, mustBe.organizer, promoCodeValidator.addPromoCode, addPromoCode);
 
 export default router;

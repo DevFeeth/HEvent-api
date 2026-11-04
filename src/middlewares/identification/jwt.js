@@ -17,18 +17,48 @@
  */
 
 import jwt from "jsonwebtoken";
+import prisma from "../../database/database.js";
+import * as userModel from "../../models/user.js";
+import {sendError} from "../../utils/sendError.js";
+
+const MAX_ID = 2147483647;
+
+const readPayload = (token) => {
+    try {
+        return jwt.verify(token, process.env.JWT_SECRET);
+    } catch (e) {
+        return null;
+    }
+};
+
+// The role and the activation come from the database: a change applies at once, without waiting for the token to expire
+const openSession = async (header) => {
+    const id = header?.startsWith("Bearer ") ? readPayload(header.slice(7))?.id : undefined;
+    if(!Number.isInteger(id) || id < 1 || id > MAX_ID){
+        return null;
+    }
+    const user = await userModel.readUserSession(prisma, {id});
+    return user?.is_active ? {id: user.id, role: user.role_name} : null;
+};
 
 export const checkJWT = async (req, res, next) => {
-    const header = req.get("Authorization");
-    if(header?.startsWith("Bearer ")){
-        try {
-            const {id, role} = jwt.verify(header.slice(7), process.env.JWT_SECRET);
-            req.session = {id, role};
-            next();
-        } catch (e) {
-            res.sendStatus(401);
-        }
-    } else {
-        res.sendStatus(401);
+    let session;
+    try {
+        session = await openSession(req.get("Authorization"));
+    } catch (err) {
+        return sendError(req, res, err);
     }
+    if(!session){
+        return res.sendStatus(401);
+    }
+    req.session = session;
+    next();
+};
+
+// For public routes: no token is fine, but a token that was sent must be valid
+export const optionalJWT = async (req, res, next) => {
+    if(!req.get("Authorization")){
+        return next();
+    }
+    return checkJWT(req, res, next);
 };

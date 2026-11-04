@@ -17,6 +17,17 @@ export const readTicketTypeById = async (db, {id}) => {
     });
 };
 
+export const readTicketTypesByIds = async (db, {ids}) => {
+    return await db.ticket_type.findMany({
+        where: {
+            id: {in: ids}
+        },
+        include: {
+            event: true
+        }
+    });
+};
+
 export const createTicketType = async (db, {name, description, price, available_quantity, event_id}) => {
     const {id} = await db.ticket_type.create({
         data: {
@@ -42,6 +53,29 @@ export const updateTicketType = async (db, {id, ...fields}) => {
             id: parseInt(id)
         },
         data: fields
+    });
+};
+export const decreaseAvailableQuantity = async (db, {id, quantity}) => {
+    const {count} = await db.ticket_type.updateMany({
+        where: {
+            id: parseInt(id),
+            available_quantity: {gte: quantity}
+        },
+        data: {
+            available_quantity: {decrement: quantity}
+        }
+    });
+    return count === 1;
+};
+
+export const increaseAvailableQuantity = async (db, {id, quantity}) => {
+    return await db.ticket_type.update({
+        where: {
+            id: parseInt(id)
+        },
+        data: {
+            available_quantity: {increment: quantity}
+        }
     });
 };
 

@@ -40,6 +40,8 @@ import {Router} from 'express';
 import {default as userRouter} from "./user.js";
 import {default as eventRouter} from "./event.js";
 import {default as ticketTypeRouter} from "./ticketType.js";
+import {default as ticketRouter} from "./ticket.js";
+import {default as orderRouter} from "./order.js";
 import {default as roleRouter} from "./role.js";
 import {default as promoCodeRouter} from "./promoCode.js";
 import {default as categoryRouter} from "./category.js";
@@ -59,6 +61,8 @@ router.get("/health", async (req, res) => {
 router.use("/users", userRouter);
 router.use("/events", eventRouter);
 router.use("/ticket-types", ticketTypeRouter);
+router.use("/tickets", ticketRouter);
+router.use("/orders", orderRouter);
 router.use("/roles", roleRouter);
 router.use("/categories", categoryRouter);
 router.use("/promo-codes", promoCodeRouter);

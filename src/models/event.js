@@ -16,6 +16,15 @@ export const readEventById = async (db, {id}) => {
     });
 };
 
+export const lockEventById = async (db, {id}) => {
+    await db.$queryRaw`SELECT id FROM events WHERE id = ${parseInt(id)} FOR UPDATE`;
+    return await db.events.findUnique({
+        where: {
+            id: parseInt(id)
+        }
+    });
+};
+
 export const createEvent = async (db, {name, description, image_url, start_date, start_time, end_date, end_time, latitude, longitude, capacity, status, category_name, organizer_id}) => {
     const {id} = await db.events.create({
         data: {
