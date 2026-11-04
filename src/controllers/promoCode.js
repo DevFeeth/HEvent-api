@@ -45,7 +45,7 @@ import * as promoCodeModel from "../models/promoCode.js";
 import * as eventModel from "../models/event.js";
 import {sendError} from "../utils/sendError.js";
 
-const canManage = (session, event) => session.role === "ADMIN" || event.organizer_id === session.id;
+const canManage = (session, event) => session?.role === "ADMIN" || event.organizer_id === session?.id;
 
 const inconsistencyAfterUpdate = (promoCode, fields) => {
     const type = fields.discount_type ?? promoCode.discount_type;
