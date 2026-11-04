@@ -56,7 +56,7 @@
  *                 $ref: '#/components/responses/ServerError'
  */
 
-import Router from 'express';
+import {Router} from 'express';
 import { checkJWT } from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as promoCodeValidator from "../middlewares/validator/promoCode.js";

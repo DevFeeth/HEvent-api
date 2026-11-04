@@ -305,7 +305,6 @@ CREATE TABLE orders (
 CREATE TABLE ticket (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 
-    public_token VARCHAR(100) NOT NULL UNIQUE,
     status ticket_status NOT NULL DEFAULT 'VALID',
 
     used_at TIMESTAMPTZ,
@@ -330,9 +329,6 @@ CREATE TABLE ticket (
         FOREIGN KEY (owner_id)
         REFERENCES users(id)
         ON DELETE RESTRICT,
-
-    CONSTRAINT check_ticket_public_token
-        CHECK (length(public_token) >= 32),
 
     CONSTRAINT check_ticket_purchase_price
         CHECK (purchase_price >= 0),

@@ -111,7 +111,7 @@ import {
 
 const router = Router();
 
-router.get("/", optionalJWT, getCategories);
+router.get("/", getCategories);
 router.post("/", checkJWT, mustBe.admin, categoryValidator.addCategory, addCategory);
 router.patch("/:name", checkJWT, mustBe.admin, categoryValidator.updateCategory, updateCategory);
 router.delete("/:name", checkJWT, mustBe.admin, categoryValidator.nameCategory, deleteCategory);

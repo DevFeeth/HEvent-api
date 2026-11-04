@@ -188,7 +188,7 @@ export const releaseExpiredOrders = async () => {
 };
 
 export const syncPendingOrderAmounts = async (tx, {id}) => {
-    const order = await orderModel.lockOrderById(tx, {id});
+    const order = await orderModel.readOrderById(tx, {id});
     if(order.status !== "PENDING"){
         return;
     }
