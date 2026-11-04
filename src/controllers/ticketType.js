@@ -34,8 +34,7 @@ import * as ticketTypeModel from "../models/ticketType.js";
 import * as eventModel from "../models/event.js";
 import {sendError} from "../utils/sendError.js";
 
-const canManage = (session, event) =>
-    session?.role === "ADMIN" || (session !== undefined && event.organizer_id === session.id);
+const canManage = (session, event) => session?.role === "ADMIN" || (session !== undefined && event.organizer_id === session?.id);
 
 const CAPACITY_MESSAGE = "The available quantity cannot exceed the event capacity";
 
