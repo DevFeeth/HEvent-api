@@ -241,11 +241,70 @@
  *                 $ref: '#/components/responses/ServerError'
  */
 
+/**
+ * @swagger
+ * /users/me/tickets:
+ *     get:
+ *         summary: Tickets of the logged-in user
+ *         security:
+ *             - bearerAuth: []
+ *         tags:
+ *             - User
+ *             - Ticket
+ *         parameters:
+ *             - in: query
+ *               name: upcoming
+ *               schema:
+ *                   type: boolean
+ *               description: Only keep the tickets of events that have not ended yet
+ *         responses:
+ *             200:
+ *                 description: The list of their tickets, sorted by event start
+ *                 content:
+ *                     application/json:
+ *                         schema:
+ *                             type: array
+ *                             items:
+ *                                 $ref: '#/components/schemas/TicketWithEvent'
+ *             400:
+ *                 $ref: '#/components/responses/ValidationError'
+ *             401:
+ *                 $ref: '#/components/responses/UnauthorizedError'
+ *             500:
+ *                 $ref: '#/components/responses/ServerError'
+ */
+
+/**
+ * @swagger
+ * /users/me/orders:
+ *     get:
+ *         summary: Orders of the logged-in user, most recent first
+ *         security:
+ *             - bearerAuth: []
+ *         tags:
+ *             - User
+ *             - Order
+ *         responses:
+ *             200:
+ *                 description: The list of their orders, with their tickets
+ *                 content:
+ *                     application/json:
+ *                         schema:
+ *                             type: array
+ *                             items:
+ *                                 $ref: '#/components/schemas/Order'
+ *             401:
+ *                 $ref: '#/components/responses/UnauthorizedError'
+ *             500:
+ *                 $ref: '#/components/responses/ServerError'
+ */
+
 import {Router} from 'express';
 import { checkJWT } from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as userValidator from "../middlewares/validator/user.js";
 import * as paramsValidator from "../middlewares/validator/params.js";
+import * as ticketValidator from "../middlewares/validator/ticket.js";
 import {
     getUsers,
     getUserById,
@@ -257,12 +316,16 @@ import {
     deleteUser,
 } from "../controllers/user.js";
 import {getMyEvents} from "../controllers/event.js";
+import {getMyTickets} from "../controllers/ticket.js";
+import {getMyOrders} from "../controllers/order.js";
 
 const router = Router();
 
 router.get("/", checkJWT, mustBe.admin, userValidator.filterUsers, getUsers);
 router.get("/me", checkJWT, getMe);
 router.get("/me/events", checkJWT, mustBe.organizer, getMyEvents);
+router.get("/me/tickets", checkJWT, ticketValidator.filterMyTickets, getMyTickets);
+router.get("/me/orders", checkJWT, getMyOrders);
 router.get("/:id", checkJWT, mustBe.admin, paramsValidator.id, getUserById);
 
 router.post("/", userValidator.registerUser, registerUser);

@@ -21,6 +21,19 @@ export const readUserById = async (db, {id}) => {
     });
 };
 
+export const readUserSession = async (db, {id}) => {
+    return await db.users.findUnique({
+        where: {
+            id: parseInt(id)
+        },
+        select: {
+            id: true,
+            role_name: true,
+            is_active: true
+        }
+    });
+};
+
 export const readUserByEmail = async (db, {email}) => {
     return await db.users.findUnique({
         where: {

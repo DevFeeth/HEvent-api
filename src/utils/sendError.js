@@ -8,6 +8,8 @@ const statusFor = (err, method) => {
                 : [400, "Referenced resource does not exist"];
         case "P2039":
             return [400, "Inconsistent data"];
+        case "P2020":
+            return [400, "A value is out of range"];
         case "P2025":
             return [404, "Resource not found"];
         default:

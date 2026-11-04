@@ -35,7 +35,9 @@ import * as eventModel from "../models/event.js";
 import {sendError} from "../utils/sendError.js";
 
 const canManage = (session, event) =>
-    session.role === "ADMIN" || event.organizer_id === session.id;
+    session?.role === "ADMIN" || (session !== undefined && event.organizer_id === session.id);
+
+const CAPACITY_MESSAGE = "The available quantity cannot exceed the event capacity";
 
 export const getTicketTypeByEvent = async (req, res) => {
     try {
@@ -59,6 +61,9 @@ export const addTicketType = async (req, res) => {
         if(!canManage(req.session, event)){
             return res.sendStatus(403);
         }
+        if(req.val.available_quantity > event.capacity){
+            return res.status(400).send(CAPACITY_MESSAGE);
+        }
         const id = await ticketTypeModel.createTicketType(prisma, {...req.val, event_id: event.id});
         res.status(201).json({id});
     } catch (err) {
@@ -76,6 +81,9 @@ export const updateTicketType = async (req, res) => {
         const event = await eventModel.readEventById(prisma, {id: ticketType.event_id});
         if(!canManage(req.session, event)){
             return res.sendStatus(403);
+        }
+        if(fields.available_quantity > event.capacity){
+            return res.status(400).send(CAPACITY_MESSAGE);
         }
         await ticketTypeModel.updateTicketType(prisma, fields);
         res.sendStatus(204);

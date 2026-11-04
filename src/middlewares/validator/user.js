@@ -114,7 +114,7 @@ const filterUserValidator = vine.create(vine.object({
     is_active: vine.boolean().optional()
 }));
 
-const registerUserValidator = vine.create(vine.object({
+export const registerFields = {
     email: vine.string().trim().toLowerCase().email().maxLength(254),
     first_name: vine.string().trim().minLength(1).maxLength(50),
     last_name: vine.string().trim().minLength(1).maxLength(50),
@@ -122,7 +122,9 @@ const registerUserValidator = vine.create(vine.object({
     address: vine.string().trim().maxLength(255).optional(),
     postal_code: vine.string().trim().maxLength(10).optional(),
     city: vine.string().trim().maxLength(100).optional()
-}));
+};
+
+const registerUserValidator = vine.create(vine.object(registerFields));
 
 const updateUserValidator = vine.create(vine.object({
     id: vine.number().withoutDecimals().positive(),

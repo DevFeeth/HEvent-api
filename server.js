@@ -3,6 +3,7 @@ import cors from "cors";
 import pinoHTTP from "pino-http";
 import {logger} from "./src/utils/logger.js"
 import {default as Router} from "./src/routes/index.js";
+import {releaseExpiredOrders} from "./src/controllers/order.js";
 
 const app = express();
 const port = 3001;
@@ -20,3 +21,7 @@ app.use((req, res) => {
 app.listen(port, () => {
     logger.info(`HEvent api listening at http://localhost:${port}`);
 });
+
+const expireOrders = () => releaseExpiredOrders().catch(err => logger.error(err));
+expireOrders();
+setInterval(expireOrders, 60 * 1000);

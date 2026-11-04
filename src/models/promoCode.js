@@ -18,6 +18,23 @@ export const readPromoCodeByEventId = async (db, {event_id}) => {
         ]
     });
 };
+export const lockPromoCodeByCode = async (db, {code}) => {
+    await db.$queryRaw`SELECT id FROM promo_code WHERE code = ${code} FOR UPDATE`;
+    return await db.promo_code.findUnique({
+        where: {
+            code
+        }
+    });
+};
+
+export const countPromoCodeUses = async (db, {id}) => {
+    return await db.orders.count({
+        where: {
+            promo_code_id: parseInt(id),
+            status: {in: ["PENDING", "PAID"]}
+        }
+    });
+};
 
 export const createPromoCode = async (db, {code, discount_type, discount_value, start_at, end_at, max_uses, min_order_amount, is_active, event_id}) => {
     const {id} = await db.promo_code.create({

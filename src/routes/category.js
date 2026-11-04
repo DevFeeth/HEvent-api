@@ -2,9 +2,7 @@
  * @swagger
  * /categories:
  *     get:
- *         summary: Get the list of categories (at least connected)
- *         security:
- *             - bearerAuth: []
+ *         summary: Get the list of categories (public)
  *         tags:
  *             - Category
  *         responses:
@@ -16,8 +14,6 @@
  *                             type: array
  *                             items:
  *                                 $ref: '#/components/schemas/Category'
- *             401:
- *                 $ref: '#/components/responses/UnauthorizedError'
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     post:
@@ -115,7 +111,7 @@ import {
 
 const router = Router();
 
-router.get("/", checkJWT, getCategories);
+router.get("/", getCategories);
 router.post("/", checkJWT, mustBe.admin, categoryValidator.addCategory, addCategory);
 router.patch("/:name", checkJWT, mustBe.admin, categoryValidator.updateCategory, updateCategory);
 router.delete("/:name", checkJWT, mustBe.admin, categoryValidator.nameCategory, deleteCategory);
