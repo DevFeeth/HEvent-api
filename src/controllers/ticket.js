@@ -264,7 +264,6 @@ export const cancelTicket = async (req, res) => {
             return res.sendStatus(403);
         }
         const cancelled = await prisma.$transaction(async (tx) => {
-            // Locked first, so that simultaneous cancellations of the same order compute the right amounts
             await orderModel.lockOrderById(tx, {id: ticket.order_id});
             const done = await ticketModel.cancelTicket(tx, {id: ticket.id});
             if(done){

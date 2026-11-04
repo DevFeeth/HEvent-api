@@ -1,4 +1,3 @@
-import {randomBytes} from "node:crypto";
 import {today} from "../utils/eventDate.js";
 
 const details = {
@@ -27,9 +26,6 @@ export const readTicketById = async (db, {id}) => {
         where: {
             id: parseInt(id)
         },
-        omit: {
-            public_token: true
-        },
         include: details
     });
 };
@@ -39,9 +35,6 @@ export const readTicketsByUserId = async (db, {owner_id, upcoming = false}) => {
         where: {
             owner_id: parseInt(owner_id),
             ...(upcoming && {ticket_type: {event: {end_date: {gte: today()}}}})
-        },
-        omit: {
-            public_token: true
         },
         include: {
             ticket_type: {
@@ -65,9 +58,6 @@ export const readTicketsByEventId = async (db, {event_id, status}) => {
             ticket_type: {
                 event_id: parseInt(event_id)
             }
-        },
-        omit: {
-            public_token: true
         },
         include: {
             ticket_type: {
@@ -110,7 +100,6 @@ export const readValidTicketsByOrderId = async (db, {order_id}) => {
 export const createTickets = async (db, {ticket_type_id, order_id, owner_id, purchase_price, quantity}) => {
     return await db.ticket.createManyAndReturn({
         data: Array.from({length: quantity}, () => ({
-            public_token: randomBytes(32).toString("hex"),
             purchase_price,
             ticket_type_id,
             order_id,
