@@ -99,7 +99,7 @@
  */
 
 import {Router} from 'express';
-import { checkJWT } from "../middlewares/identification/jwt.js";
+import {checkJWT, optionalJWT} from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as categoryValidator from "../middlewares/validator/category.js";
 import {
@@ -111,7 +111,7 @@ import {
 
 const router = Router();
 
-router.get("/", getCategories);
+router.get("/", optionalJWT, getCategories);
 router.post("/", checkJWT, mustBe.admin, categoryValidator.addCategory, addCategory);
 router.patch("/:name", checkJWT, mustBe.admin, categoryValidator.updateCategory, updateCategory);
 router.delete("/:name", checkJWT, mustBe.admin, categoryValidator.nameCategory, deleteCategory);

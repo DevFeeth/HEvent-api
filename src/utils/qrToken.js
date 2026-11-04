@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 
 export const QR_TOKEN_LIFETIME = 30;
 
-// QR_SECRET must differ from JWT_SECRET: otherwise a QR code could be used as a login token
 export const signQrToken = ({ticket_id}) => {
     return jwt.sign({}, process.env.QR_SECRET, {
         subject: String(ticket_id),
