@@ -132,8 +132,6 @@ CREATE TABLE events (
     latitude NUMERIC(9,6),
     longitude NUMERIC(9,6),
 
-    capacity INT NOT NULL,
-
     status event_status NOT NULL DEFAULT 'DRAFT',
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -159,9 +157,6 @@ CREATE TABLE events (
 
     CONSTRAINT check_event_description
         CHECK (description IS NULL OR length(description) <= 1000),
-
-    CONSTRAINT check_event_capacity
-        CHECK (capacity > 0),
 
     CONSTRAINT check_event_dates
         CHECK ((end_date + end_time) > (start_date + start_time)),

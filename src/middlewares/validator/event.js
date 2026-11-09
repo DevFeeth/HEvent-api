@@ -40,10 +40,6 @@
  *                     type: number
  *                     minimum: -180
  *                     maximum: 180
- *                 capacity:
- *                     type: integer
- *                     minimum: 1
- *                     example: 500
  *                 status:
  *                     type: string
  *                     enum: [DRAFT, PUBLISHED, CANCELLED, FINISHED]
@@ -58,7 +54,6 @@
  *                 - end_date
  *                 - start_time
  *                 - end_time
- *                 - capacity
  *                 - category_name
  *         EventToUpdate:
  *             type: object
@@ -94,9 +89,6 @@
  *                     type: number
  *                     minimum: -180
  *                     maximum: 180
- *                 capacity:
- *                     type: integer
- *                     minimum: 1
  *                 status:
  *                     type: string
  *                     enum: [DRAFT, PUBLISHED, CANCELLED, FINISHED]
@@ -131,7 +123,6 @@ const addEventValidator = vine.create(vine.object({
     end_time: time(),
     latitude: vine.number().range([-90, 90]).optional(),
     longitude: vine.number().range([-180, 180]).optional(),
-    capacity: vine.number().withoutDecimals().positive(),
     status: status().optional(),
     category_name: vine.string().trim().toUpperCase().maxLength(25)
 }));
@@ -147,7 +138,6 @@ const updateEventValidator = vine.create(vine.object({
     end_time: time().optional(),
     latitude: vine.number().range([-90, 90]).optional(),
     longitude: vine.number().range([-180, 180]).optional(),
-    capacity: vine.number().withoutDecimals().positive().optional(),
     status: status().optional(),
     category_name: vine.string().trim().toUpperCase().maxLength(25).optional()
 }));

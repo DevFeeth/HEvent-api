@@ -129,11 +129,6 @@ const createOrderWithTickets = async (tx, {items, promo_code, user_id}) => {
     if(event.status !== "PUBLISHED" || event.end_date < today()){
         throw new OrderRefusal(409, "This event is not open for sale");
     }
-    const requested = sortedItems.reduce((sum, item) => sum + item.quantity, 0);
-    if(await ticketModel.countActiveTicketsByEventId(tx, {event_id: event.id}) + requested > event.capacity){
-        throw new OrderRefusal(409, "Not enough places left for this event");
-    }
-
     const priceOf = (ticket_type_id) => toCents(ticketTypes.find(ticketType => ticketType.id === ticket_type_id).price);
     const subtotal = sortedItems.reduce((sum, item) => sum + priceOf(item.ticket_type_id) * item.quantity, 0);
     if(subtotal > MAX_AMOUNT_IN_CENTS){

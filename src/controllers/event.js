@@ -38,8 +38,6 @@
  *                     type: string
  *                     nullable: true
  *                     example: "4.865000"
- *                 capacity:
- *                     type: integer
  *                 status:
  *                     type: string
  *                     enum: [DRAFT, PUBLISHED, CANCELLED, FINISHED]
@@ -128,13 +126,10 @@ export const updateEvent = async (req, res) => {
             return res.status(400).send("The dates of an event cannot be in the past");
         }
         const refusal = await prisma.$transaction(async (tx) => {
-            if(fields.capacity !== undefined || fields.status === "DRAFT"){
+            if(fields.status === "DRAFT"){
                 await eventModel.lockEventById(tx, {id: fields.id});
                 const sold = await ticketModel.countActiveTicketsByEventId(tx, {event_id: fields.id});
-                if(fields.capacity < sold){
-                    return "The capacity cannot be lower than the number of tickets already sold";
-                }
-                if(fields.status === "DRAFT" && sold > 0){
+                if(sold > 0){
                     return "An event with tickets sold cannot go back to draft";
                 }
             }

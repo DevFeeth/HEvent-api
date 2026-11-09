@@ -25,7 +25,7 @@ export const lockEventById = async (db, {id}) => {
     });
 };
 
-export const createEvent = async (db, {name, description, image_url, start_date, start_time, end_date, end_time, latitude, longitude, capacity, status, category_name, organizer_id}) => {
+export const createEvent = async (db, {name, description, image_url, start_date, start_time, end_date, end_time, latitude, longitude, status, category_name, organizer_id}) => {
     const {id} = await db.events.create({
         data: {
             name,
@@ -37,7 +37,6 @@ export const createEvent = async (db, {name, description, image_url, start_date,
             end_time,
             latitude,
             longitude,
-            capacity,
             status,
             category_name,
             organizer_id,
