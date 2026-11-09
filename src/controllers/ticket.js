@@ -123,7 +123,6 @@
 import prisma from "../database/database.js";
 import * as ticketModel from "../models/ticket.js";
 import * as orderModel from "../models/order.js";
-import * as ticketTypeModel from "../models/ticketType.js";
 import * as eventModel from "../models/event.js";
 import {sendError} from "../utils/sendError.js";
 import {QR_TOKEN_LIFETIME, signQrToken, readQrToken} from "../utils/qrToken.js";
@@ -267,7 +266,6 @@ export const cancelTicket = async (req, res) => {
             await orderModel.lockOrderById(tx, {id: ticket.order_id});
             const done = await ticketModel.cancelTicket(tx, {id: ticket.id});
             if(done){
-                await ticketTypeModel.increaseAvailableQuantity(tx, {id: ticket.ticket_type_id, quantity: 1});
                 await syncPendingOrderAmounts(tx, {id: ticket.order_id});
             }
             return done;

@@ -55,30 +55,6 @@ export const updateTicketType = async (db, {id, ...fields}) => {
         data: fields
     });
 };
-export const decreaseAvailableQuantity = async (db, {id, quantity}) => {
-    const {count} = await db.ticket_type.updateMany({
-        where: {
-            id: parseInt(id),
-            available_quantity: {gte: quantity}
-        },
-        data: {
-            available_quantity: {decrement: quantity}
-        }
-    });
-    return count === 1;
-};
-
-export const increaseAvailableQuantity = async (db, {id, quantity}) => {
-    return await db.ticket_type.update({
-        where: {
-            id: parseInt(id)
-        },
-        data: {
-            available_quantity: {increment: quantity}
-        }
-    });
-};
-
 export const deleteTicketType = async (db, {id}) => {
     return await db.ticket_type.delete({
         where: {

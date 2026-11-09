@@ -3,6 +3,7 @@
  * /ticket-types/{id}:
  *     patch:
  *         summary: Update a ticket type (event owner organizer or administrator)
+ *         description: The available quantity cannot be lower than the number of tickets of this type already sold
  *         security:
  *             - bearerAuth: []
  *         tags:
@@ -27,7 +28,12 @@
  *             404:
  *                 $ref: '#/components/responses/NotFound'
  *             409:
- *                 $ref: '#/components/responses/Conflict'
+ *                 description: The name is already used for this event, or the quantity is lower than the number of tickets already sold
+ *                 content:
+ *                     text/plain:
+ *                         schema:
+ *                             type: string
+ *                             example: The quantity cannot be lower than the number of tickets already sold
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     delete:

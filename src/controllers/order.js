@@ -149,7 +149,9 @@ const createOrderWithTickets = async (tx, {items, promo_code, user_id}) => {
     });
 
     for(const {ticket_type_id, quantity} of sortedItems){
-        if(!await ticketTypeModel.decreaseAvailableQuantity(tx, {id: ticket_type_id, quantity})){
+        const ticketType = ticketTypes.find(t => t.id === ticket_type_id);
+        const sold = await ticketModel.countActiveTicketsByTicketTypeId(tx, {ticket_type_id});
+        if(sold + quantity > ticketType.available_quantity){
             throw new OrderRefusal(409, "Not enough tickets available");
         }
         await ticketModel.createTickets(tx, {
@@ -167,10 +169,8 @@ const cancelPendingOrder = async (tx, {id}) => {
     if(!await orderModel.changePendingOrderStatus(tx, {id, status: "CANCELLED"})){
         return false;
     }
-    const tickets = await ticketModel.cancelTicketsByOrderId(tx, {order_id: id});
-    for(const {ticket_type_id} of tickets.toSorted((a, b) => a.ticket_type_id - b.ticket_type_id)){
-        await ticketTypeModel.increaseAvailableQuantity(tx, {id: ticket_type_id, quantity: 1});
-    }
+    // Les billets annulés ne sont plus comptés comme vendus : leurs places se libèrent d'elles-mêmes
+    await ticketModel.cancelTicketsByOrderId(tx, {order_id: id});
     return true;
 };
 

@@ -21,7 +21,7 @@
  *                     example: "79.99"
  *                 available_quantity:
  *                     type: integer
- *                     description: Number of tickets still available for sale
+ *                     description: Total number of tickets of this type (does not change when tickets are sold, sold tickets are counted from the orders)
  *                     example: 1500
  *                 event_id:
  *                     type: integer
@@ -32,6 +32,7 @@
 import prisma from "../database/database.js";
 import * as ticketTypeModel from "../models/ticketType.js";
 import * as eventModel from "../models/event.js";
+import * as ticketModel from "../models/ticket.js";
 import {sendError} from "../utils/sendError.js";
 
 const canManage = (session, event) => session?.role === "ADMIN" || (session !== undefined && event.organizer_id === session?.id);
@@ -76,7 +77,20 @@ export const updateTicketType = async (req, res) => {
         if(!canManage(req.session, event)){
             return res.sendStatus(403);
         }
-        await ticketTypeModel.updateTicketType(prisma, fields);
+        const refusal = await prisma.$transaction(async (tx) => {
+            if(fields.available_quantity !== undefined){
+                await eventModel.lockEventById(tx, {id: ticketType.event_id});
+                const sold = await ticketModel.countActiveTicketsByTicketTypeId(tx, {ticket_type_id: ticketType.id});
+                if(fields.available_quantity < sold){
+                    return "The quantity cannot be lower than the number of tickets already sold";
+                }
+            }
+            await ticketTypeModel.updateTicketType(tx, fields);
+            return null;
+        });
+        if(refusal){
+            return res.status(409).send(refusal);
+        }
         res.sendStatus(204);
     } catch (err) {
         sendError(req, res, err);
