@@ -1,11 +1,46 @@
+import {today} from "../utils/eventDate.js";
+
 export const readEvents = async (db, {status, category_name, organizer_id} = {}) => {
     return await db.events.findMany({
         where: {
             status: Array.isArray(status) ? {in: status} : status,
             category_name,
             organizer_id
-        }
+        },
+        orderBy: [
+            {start_date: "asc"},
+            {start_time: "asc"},
+            {id: "asc"}
+        ]
     });
+};
+
+export const readEventsByOrganizer = async (db, {organizer_id}) => {
+    const [active, past] = await Promise.all([
+        db.events.findMany({
+            where: {
+                organizer_id,
+                end_date: {gte: today()}
+            },
+            orderBy: [
+                {start_date: "asc"},
+                {start_time: "asc"},
+                {id: "asc"}
+            ]
+        }),
+        db.events.findMany({
+            where: {
+                organizer_id,
+                end_date: {lt: today()}
+            },
+            orderBy: [
+                {start_date: "desc"},
+                {start_time: "desc"},
+                {id: "desc"}
+            ]
+        })
+    ]);
+    return [...active, ...past];
 };
 
 export const readEventById = async (db, {id}) => {
