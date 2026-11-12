@@ -15,7 +15,22 @@ export const readEvents = async (db, {status, category_name, organizer_id} = {})
     });
 };
 
-export const readEventsByOrganizer = async (db, {organizer_id}) => {
+export const readUpcomingEvents = async (db, {limit = 3} = {}) => {
+    return await db.events.findMany({
+        where: {
+            status: "PUBLISHED",
+            start_date: {gte: today()}
+        },
+        orderBy: [
+            {start_date: "asc"},
+            {start_time: "asc"},
+            {id: "asc"}
+        ],
+        take: limit
+    });
+};
+
+export const readEventsByOrganizer =async (db, {organizer_id}) => {
     const [active, past] = await Promise.all([
         db.events.findMany({
             where: {

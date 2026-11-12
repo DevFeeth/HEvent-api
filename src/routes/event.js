@@ -75,6 +75,27 @@
 
 /**
  * @swagger
+ * /events/upcoming:
+ *     get:
+ *         summary: Get the 3 next upcoming events (sorted from the closest to the furthest)
+ *         description: Only published events whose start date is today or later
+ *         tags:
+ *             - Event
+ *         responses:
+ *             200:
+ *                 description: The list of upcoming events (3 at most)
+ *                 content:
+ *                     application/json:
+ *                         schema:
+ *                             type: array
+ *                             items:
+ *                                 $ref: '#/components/schemas/Event'
+ *             500:
+ *                 $ref: '#/components/responses/ServerError'
+ */
+
+/**
+ * @swagger
  * /events/{id}:
  *     get:
  *         summary: Get the details of an event
@@ -337,6 +358,7 @@ import * as ticketValidator from "../middlewares/validator/ticket.js";
 import * as promoCodeValidator from "../middlewares/validator/promoCode.js";
 import {
     getEvents,
+    getUpcomingEvents,
     getEventById,
     addEvent,
     updateEvent,
@@ -356,6 +378,7 @@ import {
 const router = Router();
 
 router.get("/", optionalJWT, eventValidator.filterEvent, getEvents);
+router.get("/upcoming", getUpcomingEvents);
 router.get("/:id", optionalJWT, paramsValidator.id, getEventById);
 
 router.post("/", checkJWT, mustBe.organizer, eventValidator.addEvent, addEvent);

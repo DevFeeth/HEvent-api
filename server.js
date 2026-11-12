@@ -18,7 +18,7 @@ app.use((req, res) => {
     return res.status(404).send("This URL is not supported by the application");
 });
 
-app.listen(port, "0.0.0.0",  () => {
+app.listen(port, "0.0.0.0", () => {
     logger.info(`HEvent api listening at http://localhost:${port}`);
 });
 
