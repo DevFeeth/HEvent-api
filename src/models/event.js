@@ -1,11 +1,61 @@
+import {today} from "../utils/eventDate.js";
+
 export const readEvents = async (db, {status, category_name, organizer_id} = {}) => {
     return await db.events.findMany({
         where: {
             status: Array.isArray(status) ? {in: status} : status,
             category_name,
             organizer_id
-        }
+        },
+        orderBy: [
+            {start_date: "asc"},
+            {start_time: "asc"},
+            {id: "asc"}
+        ]
     });
+};
+
+export const readUpcomingEvents = async (db, {limit = 3} = {}) => {
+    return await db.events.findMany({
+        where: {
+            status: "PUBLISHED",
+            start_date: {gte: today()}
+        },
+        orderBy: [
+            {start_date: "asc"},
+            {start_time: "asc"},
+            {id: "asc"}
+        ],
+        take: limit
+    });
+};
+
+export const readEventsByOrganizer =async (db, {organizer_id}) => {
+    const [active, past] = await Promise.all([
+        db.events.findMany({
+            where: {
+                organizer_id,
+                end_date: {gte: today()}
+            },
+            orderBy: [
+                {start_date: "asc"},
+                {start_time: "asc"},
+                {id: "asc"}
+            ]
+        }),
+        db.events.findMany({
+            where: {
+                organizer_id,
+                end_date: {lt: today()}
+            },
+            orderBy: [
+                {start_date: "desc"},
+                {start_time: "desc"},
+                {id: "desc"}
+            ]
+        })
+    ]);
+    return [...active, ...past];
 };
 
 export const readEventById = async (db, {id}) => {
@@ -25,7 +75,7 @@ export const lockEventById = async (db, {id}) => {
     });
 };
 
-export const createEvent = async (db, {name, description, image_url, start_date, start_time, end_date, end_time, latitude, longitude, capacity, status, category_name, organizer_id}) => {
+export const createEvent = async (db, {name, description, image_url, start_date, start_time, end_date, end_time, latitude, longitude, status, category_name, organizer_id}) => {
     const {id} = await db.events.create({
         data: {
             name,
@@ -37,7 +87,6 @@ export const createEvent = async (db, {name, description, image_url, start_date,
             end_time,
             latitude,
             longitude,
-            capacity,
             status,
             category_name,
             organizer_id,

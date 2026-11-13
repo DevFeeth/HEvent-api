@@ -123,7 +123,7 @@
  * /tickets/{id}/cancel:
  *     post:
  *         summary: Cancel a valid ticket (event owner organizer or administrator)
- *         description: The ticket goes back on sale (available quantity of its type + 1). On a pending order, the amounts are recalculated (the order is cancelled if no ticket is left). On a paid order, the amounts are not changed and no refund is made
+ *         description: The ticket goes back on sale (it is no longer counted as sold for its type). On a pending order, the amounts are recalculated (the order is cancelled if no ticket is left). On a paid order, the amounts are not changed and no refund is made
  *         security:
  *             - bearerAuth: []
  *         tags:

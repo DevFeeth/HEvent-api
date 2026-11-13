@@ -34,7 +34,7 @@
  *                     type: integer
  *                     minimum: 0
  *                     maximum: 2147483647
- *                     description: Number of tickets put on sale
+ *                     description: Total number of tickets of this type (sold tickets are counted from the orders)
  *                     example: 200
  *             required:
  *                 - name

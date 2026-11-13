@@ -3,7 +3,7 @@
  * /orders:
  *     post:
  *         summary: Create an order and its tickets
- *         description: The tickets are reserved (removed from the available quantity) and the order stays PENDING until it is paid. Its tickets cannot be used before that. An order with a total of 0 is PAID right away. An unpaid order is cancelled after 15 minutes and its tickets go back on sale
+ *         description: The tickets are reserved (counted as sold for their ticket type) and the order stays PENDING until it is paid. Its tickets cannot be used before that. An order with a total of 0 is PAID right away. An unpaid order is cancelled after 15 minutes and its tickets go back on sale
  *         security:
  *             - bearerAuth: []
  *         tags:

@@ -85,6 +85,15 @@ export const countActiveTicketsByEventId = async (db, {event_id}) => {
     });
 };
 
+export const countActiveTicketsByTicketTypeId = async (db, {ticket_type_id}) => {
+    return await db.ticket.count({
+        where: {
+            status: {not: "CANCELLED"},
+            ticket_type_id: parseInt(ticket_type_id)
+        }
+    });
+};
+
 export const readValidTicketsByOrderId = async (db, {order_id}) => {
     return await db.ticket.findMany({
         where: {
