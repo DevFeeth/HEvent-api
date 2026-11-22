@@ -1,0 +1,25 @@
+meta {
+  name: Get my events
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/users/me/events
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("contains the created event", function () {
+    expect(res.body.some(e => e.id === bru.getVar("eventId"))).to.equal(true);
+  });
+}

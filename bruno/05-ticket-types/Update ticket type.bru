@@ -1,0 +1,27 @@
+meta {
+  name: Update ticket type
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/ticket-types/{{ticketTypeId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+body:json {
+  {
+    "description": "Standing ticket, access to the bar"
+  }
+}
+
+tests {
+  test("returns 204", function () {
+    expect(res.status).to.equal(204);
+  });
+}

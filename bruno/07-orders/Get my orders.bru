@@ -1,0 +1,25 @@
+meta {
+  name: Get my orders
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/users/me/orders
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("contains the order", function () {
+    expect(res.body.some(o => o.id === bru.getVar("orderId"))).to.equal(true);
+  });
+}

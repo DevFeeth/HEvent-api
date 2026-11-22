@@ -1,0 +1,27 @@
+meta {
+  name: Pay order declined card
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/orders/{{orderId}}/pay
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+body:json {
+  {
+    "payment_method": "pm_card_chargeDeclined"
+  }
+}
+
+tests {
+  test("returns 402", function () {
+    expect(res.status).to.equal(402);
+  });
+}

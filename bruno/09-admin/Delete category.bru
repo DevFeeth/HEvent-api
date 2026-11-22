@@ -1,0 +1,21 @@
+meta {
+  name: Delete category
+  type: http
+  seq: 10
+}
+
+delete {
+  url: {{baseUrl}}/categories/{{categoryName}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("returns 204", function () {
+    expect(res.status).to.equal(204);
+  });
+}

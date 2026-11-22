@@ -1,0 +1,28 @@
+meta {
+  name: Update user as admin
+  type: http
+  seq: 9
+}
+
+patch {
+  url: {{baseUrl}}/users/{{newUserId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "role_name": "ORGANIZER",
+    "is_active": false
+  }
+}
+
+tests {
+  test("returns 204", function () {
+    expect(res.status).to.equal(204);
+  });
+}

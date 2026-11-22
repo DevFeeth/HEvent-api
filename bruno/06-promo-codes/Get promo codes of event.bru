@@ -1,0 +1,25 @@
+meta {
+  name: Get promo codes of event
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/events/{{eventId}}/promo-codes
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("contains the promo code", function () {
+    expect(res.body.some(p => p.id === bru.getVar("promoId"))).to.equal(true);
+  });
+}

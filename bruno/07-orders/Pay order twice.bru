@@ -1,0 +1,27 @@
+meta {
+  name: Pay order twice
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/orders/{{orderId}}/pay
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+body:json {
+  {
+    "payment_method": "pm_card_visa"
+  }
+}
+
+tests {
+  test("returns 409", function () {
+    expect(res.status).to.equal(409);
+  });
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Delete used ticket type
+  type: http
+  seq: 11
+}
+
+delete {
+  url: {{baseUrl}}/ticket-types/{{ticketTypeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+tests {
+  test("returns 409", function () {
+    expect(res.status).to.equal(409);
+  });
+}

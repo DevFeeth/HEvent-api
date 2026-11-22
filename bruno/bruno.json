@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "HEvent API",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

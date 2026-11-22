@@ -1,0 +1,27 @@
+meta {
+  name: Update event as admin
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/events/{{eventId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "description": "Updated by the administrator"
+  }
+}
+
+tests {
+  test("returns 204", function () {
+    expect(res.status).to.equal(204);
+  });
+}

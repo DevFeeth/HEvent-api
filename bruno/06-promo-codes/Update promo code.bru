@@ -1,0 +1,27 @@
+meta {
+  name: Update promo code
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/promo-codes/{{promoId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+body:json {
+  {
+    "max_uses": 5
+  }
+}
+
+tests {
+  test("returns 204", function () {
+    expect(res.status).to.equal(204);
+  });
+}

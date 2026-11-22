@@ -30,7 +30,7 @@
  *                     format: date-time
  *                 role_name:
  *                     type: string
- *                     enum: [USER, ORGANIZER, ADMIN]
+ *                     example: ORGANIZER
  *     responses:
  *         Token:
  *             description: Login successful, the JWT is valid for 24 hours

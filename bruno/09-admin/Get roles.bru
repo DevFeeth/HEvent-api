@@ -1,0 +1,25 @@
+meta {
+  name: Get roles
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/roles
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("contains the base roles", function () {
+    expect(res.body.map(r => r.name)).to.include.members(["USER", "ORGANIZER", "ADMIN"]);
+  });
+}

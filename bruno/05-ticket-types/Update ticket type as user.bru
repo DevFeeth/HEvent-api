@@ -1,0 +1,27 @@
+meta {
+  name: Update ticket type as user
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/ticket-types/{{ticketTypeId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+body:json {
+  {
+    "price": 1
+  }
+}
+
+tests {
+  test("returns 403", function () {
+    expect(res.status).to.equal(403);
+  });
+}

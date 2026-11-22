@@ -1,0 +1,21 @@
+meta {
+  name: Get users as user
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/users
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+tests {
+  test("returns 403", function () {
+    expect(res.status).to.equal(403);
+  });
+}

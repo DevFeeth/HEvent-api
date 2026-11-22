@@ -1,0 +1,32 @@
+meta {
+  name: Login user
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/users/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "user@mail.com",
+    "password": "{{password}}"
+  }
+}
+
+script:post-response {
+  bru.setVar("userToken", res.body.token);
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("returns a token", function () {
+    expect(res.body.token).to.be.a("string");
+  });
+}

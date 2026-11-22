@@ -30,7 +30,7 @@ export const readUpcomingEvents = async (db, {limit = 3} = {}) => {
     });
 };
 
-export const readEventsByOrganizer =async (db, {organizer_id}) => {
+export const readEventsByOrganizer = async (db, {organizer_id}) => {
     const [active, past] = await Promise.all([
         db.events.findMany({
             where: {

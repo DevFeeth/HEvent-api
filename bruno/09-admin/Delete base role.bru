@@ -1,0 +1,21 @@
+meta {
+  name: Delete base role
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/roles/USER
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("returns 409", function () {
+    expect(res.status).to.equal(409);
+  });
+}

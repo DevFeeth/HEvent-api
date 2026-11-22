@@ -1,0 +1,21 @@
+meta {
+  name: Delete used category
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{baseUrl}}/categories/CONCERT
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("returns 409", function () {
+    expect(res.status).to.equal(409);
+  });
+}
