@@ -1,0 +1,21 @@
+meta {
+  name: Get event
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/events/{{eventId}}
+  body: none
+  auth: none
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("is the created event", function () {
+    expect(res.body.name).to.equal("Bruno Test Concert");
+  });
+}

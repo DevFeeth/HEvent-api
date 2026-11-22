@@ -88,12 +88,12 @@
  *                           type: boolean
  *                       role_name:
  *                           type: string
- *                           enum: [USER, ORGANIZER, ADMIN]
+ *                           example: ORGANIZER
  */
 
 import vine from "@vinejs/vine";
 
-const roles = () => vine.string().trim().toUpperCase().maxLength(25)
+const roleName = () => vine.string().trim().toUpperCase().maxLength(25);
 
 const profile = {
     first_name: vine.string().trim().minLength(1).maxLength(50).optional(),
@@ -110,7 +110,7 @@ const loginValidator = vine.create(vine.object({
 }));
 
 const filterUserValidator = vine.create(vine.object({
-    role_name: roles().optional(),
+    role_name: roleName().optional(),
     is_active: vine.boolean().optional()
 }));
 
@@ -131,7 +131,7 @@ const updateUserValidator = vine.create(vine.object({
     ...profile,
     email: vine.string().trim().toLowerCase().email().maxLength(254).optional(),
     is_active: vine.boolean().optional(),
-    role_name: roles().optional()
+    role_name: roleName().optional()
 }));
 
 const updateMeValidator = vine.create(vine.object({

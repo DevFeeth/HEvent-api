@@ -1,0 +1,27 @@
+meta {
+  name: Scan ticket twice
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/tickets/scan
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+body:json {
+  {
+    "qr_token": "{{qrToken}}"
+  }
+}
+
+tests {
+  test("returns 409", function () {
+    expect(res.status).to.equal(409);
+  });
+}

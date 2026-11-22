@@ -1,0 +1,32 @@
+meta {
+  name: Create category
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/categories
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "name": "{{categoryName}}",
+    "label": "Bruno category"
+  }
+}
+
+script:pre-request {
+  bru.setVar("categoryName", "BRUNO_" + Date.now().toString(36).toUpperCase());
+}
+
+tests {
+  test("returns 201", function () {
+    expect(res.status).to.equal(201);
+  });
+}

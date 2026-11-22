@@ -1,0 +1,21 @@
+meta {
+  name: Cancel ticket twice
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/tickets/{{secondTicketId}}/cancel
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+tests {
+  test("returns 409", function () {
+    expect(res.status).to.equal(409);
+  });
+}

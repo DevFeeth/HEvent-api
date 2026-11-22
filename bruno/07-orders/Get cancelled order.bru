@@ -1,0 +1,26 @@
+meta {
+  name: Get cancelled order
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/orders/{{guestOrderId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{guestToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("order and tickets are cancelled", function () {
+    expect(res.body.status).to.equal("CANCELLED");
+    expect(res.body.ticket.every(t => t.status === "CANCELLED")).to.equal(true);
+  });
+}

@@ -1,0 +1,32 @@
+meta {
+  name: Create role
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/roles
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "name": "{{roleName}}",
+    "label": "Bruno role"
+  }
+}
+
+script:pre-request {
+  bru.setVar("roleName", "BRUNO_" + Date.now().toString(36).toUpperCase());
+}
+
+tests {
+  test("returns 201", function () {
+    expect(res.status).to.equal(201);
+  });
+}

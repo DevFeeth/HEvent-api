@@ -84,7 +84,7 @@ export const getUpcomingEvents = async (req, res) => {
     }
 };
 
-export const getMyEvents =async (req, res) => {
+export const getMyEvents = async (req, res) => {
     try {
         const events = await eventModel.readEventsByOrganizer(prisma, {organizer_id: req.session.id});
         res.send(events);

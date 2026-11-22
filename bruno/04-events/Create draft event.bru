@@ -1,0 +1,58 @@
+meta {
+  name: Create draft event
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/events
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+body:json {
+  {
+    "name": "Bruno Draft",
+    "description": "Event created by the Bruno collection",
+    "start_date": "{{nextMonth}}",
+    "end_date": "{{nextMonthEnd}}",
+    "start_time": "20:00",
+    "end_time": "02:00",
+    "latitude": 50.4669,
+    "longitude": 4.8675,
+    "status": "DRAFT",
+    "category_name": "CONCERT"
+  }
+}
+
+script:pre-request {
+  // Brussels is UTC+2 from the last Sunday of March to the last Sunday of October, UTC+1 otherwise
+  const lastSunday = (year, month) => {
+      const last = new Date(Date.UTC(year, month + 1, 0));
+      return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1);
+  };
+  const day = (offset) => {
+      const ms = Date.now() + offset * 24 * 60 * 60 * 1000;
+      const year = new Date(ms).getUTCFullYear();
+      const hours = ms >= lastSunday(year, 2) && ms < lastSunday(year, 9) ? 2 : 1;
+      return new Date(ms + hours * 60 * 60 * 1000).toISOString().slice(0, 10);
+  };
+  bru.setVar("today", day(0));
+  bru.setVar("tomorrow", day(1));
+  bru.setVar("nextMonth", day(30));
+  bru.setVar("nextMonthEnd", day(31));
+}
+
+script:post-response {
+  bru.setVar("draftEventId", res.body.id);
+}
+
+tests {
+  test("returns 201", function () {
+    expect(res.status).to.equal(201);
+  });
+}

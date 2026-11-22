@@ -1,0 +1,26 @@
+meta {
+  name: Get user as admin
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/users/{{newUserId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("changes are saved", function () {
+    expect(res.body.role_name).to.equal("ORGANIZER");
+    expect(res.body.is_active).to.equal(false);
+  });
+}

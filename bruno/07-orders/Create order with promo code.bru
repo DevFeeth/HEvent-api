@@ -1,0 +1,46 @@
+meta {
+  name: Create order with promo code
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/orders
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+body:json {
+  {
+    "items": [
+      {
+        "ticket_type_id": {{ticketTypeId}},
+        "quantity": 2
+      }
+    ],
+    "promo_code": "{{promoCode}}"
+  }
+}
+
+script:post-response {
+  bru.setVar("orderId", res.body.id);
+  bru.setVar("ticketId", res.body.ticket[0].id);
+  bru.setVar("secondTicketId", res.body.ticket[1].id);
+}
+
+tests {
+  test("returns 201", function () {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("applies the 20% discount", function () {
+    expect(res.body.status).to.equal("PENDING");
+    expect(Number(res.body.subtotal)).to.equal(50);
+    expect(Number(res.body.total)).to.equal(40);
+    expect(res.body.ticket.length).to.equal(2);
+  });
+}

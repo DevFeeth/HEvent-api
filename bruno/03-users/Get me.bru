@@ -1,0 +1,26 @@
+meta {
+  name: Get me
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/users/me
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("does not return the password", function () {
+    expect(res.body.email).to.equal("user@mail.com");
+    expect(res.body).to.not.have.property("password_hash");
+  });
+}

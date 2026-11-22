@@ -1,0 +1,36 @@
+meta {
+  name: Create order too many tickets
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/orders
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+body:json {
+  {
+    "items": [
+      {
+        "ticket_type_id": {{ticketTypeId}},
+        "quantity": 3
+      }
+    ]
+  }
+}
+
+tests {
+  test("returns 409", function () {
+    expect(res.status).to.equal(409);
+  });
+  
+  test("nothing is created (rollback)", function () {
+    expect(res.body).to.equal("Not enough tickets available");
+  });
+}

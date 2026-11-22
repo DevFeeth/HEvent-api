@@ -1,0 +1,39 @@
+meta {
+  name: Register user
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/users
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{newUserEmail}}",
+    "first_name": "Bruno",
+    "last_name": "Test",
+    "password": "{{password}}",
+    "city": "Namur"
+  }
+}
+
+script:pre-request {
+  bru.setVar("newUserEmail", "bruno." + Date.now() + "@mail.com");
+}
+
+script:post-response {
+  bru.setVar("newUserId", res.body.id);
+}
+
+tests {
+  test("returns 201", function () {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("returns the new id", function () {
+    expect(res.body.id).to.be.a("number");
+  });
+}

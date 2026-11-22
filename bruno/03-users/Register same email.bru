@@ -1,0 +1,26 @@
+meta {
+  name: Register same email
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/users
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{newUserEmail}}",
+    "first_name": "Bruno",
+    "last_name": "Test",
+    "password": "{{password}}"
+  }
+}
+
+tests {
+  test("returns 409", function () {
+    expect(res.status).to.equal(409);
+  });
+}

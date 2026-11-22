@@ -12,7 +12,7 @@
  *               name: role_name
  *               schema:
  *                   type: string
- *                   enum: [USER, ORGANIZER, ADMIN]
+ *                   example: ORGANIZER
  *               description: Filter by role
  *             - in: query
  *               name: is_active

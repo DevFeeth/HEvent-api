@@ -1,0 +1,25 @@
+meta {
+  name: Get ticket
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/tickets/{{ticketId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("is valid", function () {
+    expect(res.body.status).to.equal("VALID");
+  });
+}
