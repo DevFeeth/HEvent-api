@@ -1,0 +1,32 @@
+meta {
+  name: Scan ticket
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/tickets/scan
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+body:json {
+  {
+    "qr_token": "{{qrToken}}"
+  }
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("ticket is used", function () {
+    expect(res.body.status).to.equal("USED");
+    expect(res.body.used_at).to.not.equal(null);
+  });
+}

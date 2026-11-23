@@ -169,7 +169,7 @@ const cancelPendingOrder = async (tx, {id}) => {
     if(!await orderModel.changePendingOrderStatus(tx, {id, status: "CANCELLED"})){
         return false;
     }
-    // Les billets annulés ne sont plus comptés comme vendus : leurs places se libèrent d'elles-mêmes
+    // Cancelled tickets are no longer counted as sold, so their places are released automatically
     await ticketModel.cancelTicketsByOrderId(tx, {order_id: id});
     return true;
 };

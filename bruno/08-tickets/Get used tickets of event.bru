@@ -1,0 +1,25 @@
+meta {
+  name: Get used tickets of event
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/events/{{eventId}}/tickets?status=USED
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("contains the scanned ticket", function () {
+    expect(res.body.map(t => t.id)).to.include(bru.getVar("ticketId"));
+  });
+}

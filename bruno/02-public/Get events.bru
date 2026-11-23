@@ -1,0 +1,21 @@
+meta {
+  name: Get events
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/events
+  body: none
+  auth: none
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("hides drafts", function () {
+    expect(res.body.every(e => e.status !== "DRAFT")).to.equal(true);
+  });
+}

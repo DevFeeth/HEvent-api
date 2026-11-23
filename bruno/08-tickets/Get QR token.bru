@@ -1,0 +1,29 @@
+meta {
+  name: Get QR token
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/tickets/{{ticketId}}/qr-token
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{userToken}}
+}
+
+script:post-response {
+  bru.setVar("qrToken", res.body.qr_token);
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("expires in 30 seconds", function () {
+    expect(res.body.expires_in).to.equal(30);
+  });
+}

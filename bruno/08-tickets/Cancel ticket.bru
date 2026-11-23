@@ -1,0 +1,21 @@
+meta {
+  name: Cancel ticket
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/tickets/{{secondTicketId}}/cancel
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+tests {
+  test("returns 204", function () {
+    expect(res.status).to.equal(204);
+  });
+}

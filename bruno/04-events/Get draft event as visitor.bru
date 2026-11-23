@@ -1,0 +1,17 @@
+meta {
+  name: Get draft event as visitor
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/events/{{draftEventId}}
+  body: none
+  auth: none
+}
+
+tests {
+  test("returns 404", function () {
+    expect(res.status).to.equal(404);
+  });
+}

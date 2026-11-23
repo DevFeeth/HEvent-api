@@ -1,0 +1,29 @@
+meta {
+  name: Create ticket type same name
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/events/{{eventId}}/ticket-types
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{orgaToken}}
+}
+
+body:json {
+  {
+    "name": "Standard",
+    "price": 30,
+    "available_quantity": 10
+  }
+}
+
+tests {
+  test("returns 409", function () {
+    expect(res.status).to.equal(409);
+  });
+}

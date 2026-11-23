@@ -1,0 +1,22 @@
+meta {
+  name: Get remaining tickets
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/events/{{eventId}}/ticket-types
+  body: none
+  auth: none
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("2 tickets left after the order", function () {
+    const ticketType = res.body.find(t => t.id === bru.getVar("ticketTypeId"));
+    expect(ticketType.remaining_quantity).to.equal(2);
+  });
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Cancel guest order
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/orders/{{guestOrderId}}/cancel
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{guestToken}}
+}
+
+tests {
+  test("returns 204", function () {
+    expect(res.status).to.equal(204);
+  });
+}

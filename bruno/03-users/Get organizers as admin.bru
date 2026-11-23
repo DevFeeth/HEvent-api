@@ -1,0 +1,26 @@
+meta {
+  name: Get organizers as admin
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/users?role_name=ORGANIZER
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("only organizers", function () {
+    expect(res.body.length).to.be.above(0);
+    expect(res.body.every(u => u.role_name === "ORGANIZER")).to.equal(true);
+  });
+}

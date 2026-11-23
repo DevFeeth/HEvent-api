@@ -200,13 +200,20 @@
  *             - $ref: '#/components/parameters/EventId'
  *         responses:
  *             200:
- *                 description: The list of ticket types
+ *                 description: The list of ticket types, with the number of tickets still for sale
  *                 content:
  *                     application/json:
  *                         schema:
  *                             type: array
  *                             items:
- *                                 $ref: '#/components/schemas/TicketType'
+ *                                 allOf:
+ *                                     - $ref: '#/components/schemas/TicketType'
+ *                                     - type: object
+ *                                       properties:
+ *                                           remaining_quantity:
+ *                                               type: integer
+ *                                               description: Tickets still for sale (available quantity minus the tickets sold, pending orders included)
+ *                                               example: 1320
  *             400:
  *                 $ref: '#/components/responses/ValidationError'
  *             401:

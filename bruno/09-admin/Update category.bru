@@ -1,0 +1,27 @@
+meta {
+  name: Update category
+  type: http
+  seq: 8
+}
+
+patch {
+  url: {{baseUrl}}/categories/{{categoryName}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "label": "Bruno category (updated)"
+  }
+}
+
+tests {
+  test("returns 204", function () {
+    expect(res.status).to.equal(204);
+  });
+}

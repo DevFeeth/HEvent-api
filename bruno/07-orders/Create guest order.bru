@@ -1,0 +1,48 @@
+meta {
+  name: Create guest order
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/orders/guest
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      {
+        "ticket_type_id": {{ticketTypeId}},
+        "quantity": 1
+      }
+    ],
+    "user": {
+      "email": "{{guestEmail}}",
+      "first_name": "Guest",
+      "last_name": "Bruno",
+      "password": "{{password}}"
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar("guestEmail", "guest." + Date.now() + "@mail.com");
+}
+
+script:post-response {
+  bru.setVar("guestToken", res.body.token);
+  bru.setVar("guestOrderId", res.body.order.id);
+}
+
+tests {
+  test("returns 201", function () {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("returns a token and the order", function () {
+    expect(res.body.token).to.be.a("string");
+    expect(res.body.order.status).to.equal("PENDING");
+  });
+}

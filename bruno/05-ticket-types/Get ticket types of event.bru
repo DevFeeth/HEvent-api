@@ -1,0 +1,23 @@
+meta {
+  name: Get ticket types of event
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/events/{{eventId}}/ticket-types
+  body: none
+  auth: none
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("all the tickets are for sale", function () {
+    const ticketType = res.body.find(t => t.id === bru.getVar("ticketTypeId"));
+    expect(ticketType.available_quantity).to.equal(4);
+    expect(ticketType.remaining_quantity).to.equal(4);
+  });
+}

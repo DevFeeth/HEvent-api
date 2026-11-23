@@ -1,12 +1,23 @@
 export const readTicketTypeByEvent = async (db, {event_id}) => {
-    return await db.ticket_type.findMany({
+    const ticketTypes = await db.ticket_type.findMany({
         where: {
             event_id: parseInt(event_id)
+        },
+        include: {
+            _count: {
+                select: {
+                    ticket: {where: {status: {not: "CANCELLED"}}}
+                }
+            }
         },
         orderBy: {
             price: "asc"
         }
     });
+    return ticketTypes.map(({_count, ...ticketType}) => ({
+        ...ticketType,
+        remaining_quantity: Math.max(ticketType.available_quantity - _count.ticket, 0)
+    }));
 };
 
 export const readTicketTypeById = async (db, {id}) => {
