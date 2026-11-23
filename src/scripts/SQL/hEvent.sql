@@ -713,3 +713,52 @@ BEGIN
         END LOOP;
     END LOOP;
 END $$;
+
+
+-- Billets du compte de test admin@mail.com : un evenement le jour meme (date du jour a
+-- l'initialisation de la base) et des evenements de plus en plus lointains.
+INSERT INTO events (name, description, image_url, start_date, end_date, start_time, end_time,
+                    latitude, longitude, status, category_name, organizer_id)
+VALUES ('Afterwork du jour',
+        'Événement de test qui a lieu aujourd''hui : concert acoustique et DJ set en fin de soirée.',
+        'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80',
+        CURRENT_DATE, CURRENT_DATE, '10:00', '23:59', 50.466900, 4.867500, 'PUBLISHED', 'CONCERT',
+        (SELECT id FROM users WHERE email = 'orga@mail.com'));
+
+INSERT INTO ticket_type (name, description, price, available_quantity, event_id)
+SELECT t.name, t.description, t.price, t.qty, (SELECT id FROM events WHERE name = 'Afterwork du jour')
+FROM (VALUES
+    ('Entrée', 'Accès à la soirée.', 12.00, 100),
+    ('VIP',    'Accès à la soirée, coupe-file et une boisson.', 30.00, 20)
+) AS t(name, description, price, qty);
+
+DO $$
+DECLARE
+    v_admin INT := (SELECT id FROM users WHERE email = 'admin@mail.com');
+    v_order INT;
+    tt      RECORD;
+BEGIN
+    FOR tt IN
+        SELECT t.id, t.price, w.qty
+        FROM (VALUES
+            ('Afterwork du jour',            'Entrée',         2),
+            ('Afterwork du jour',            'VIP',            1),
+            ('Molière revisité',             'Plein tarif',    1),
+            ('Tech & Web Namur Meetup',      'Standard',       1),
+            ('Nouvel An à Liège',            'Entrée',         2),
+            ('Symphonie de printemps',       'Catégorie 1',    1),
+            ('Citadelle Summer Sounds 2027', 'Pass 3 jours',   2)
+        ) AS w(event_name, type_name, qty)
+        JOIN events e ON e.name = w.event_name
+        JOIN ticket_type t ON t.event_id = e.id AND t.name = w.type_name
+        ORDER BY e.start_date, t.id
+    LOOP
+        INSERT INTO orders (subtotal, discount_amount, status, user_id)
+        VALUES (tt.price * tt.qty, 0, 'PAID', v_admin)
+        RETURNING id INTO v_order;
+
+        INSERT INTO ticket (purchase_price, ticket_type_id, order_id, owner_id)
+        SELECT tt.price, tt.id, v_order, v_admin
+        FROM generate_series(1, tt.qty);
+    END LOOP;
+END $$;
