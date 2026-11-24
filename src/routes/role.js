@@ -7,15 +7,24 @@
  *             - bearerAuth: []
  *         tags:
  *             - Role
+ *         parameters:
+ *             - $ref: '#/components/parameters/Search'
+ *             - $ref: '#/components/parameters/Page'
+ *             - $ref: '#/components/parameters/Limit'
  *         responses:
  *             200:
- *                 description: The list of roles
+ *                 description: The list of roles with their number of users. Search in code and label
+ *                 headers:
+ *                     X-Total-Count:
+ *                         $ref: '#/components/headers/TotalCount'
  *                 content:
  *                     application/json:
  *                         schema:
  *                             type: array
  *                             items:
  *                                 $ref: '#/components/schemas/Role'
+ *             400:
+ *                 $ref: '#/components/responses/ValidationError'
  *             401:
  *                 $ref: '#/components/responses/UnauthorizedError'
  *             403:
@@ -108,6 +117,7 @@ import {Router} from 'express';
 import { checkJWT } from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as roleValidator from "../middlewares/validator/role.js";
+import * as paramsValidator from "../middlewares/validator/params.js";
 import {
     getRoles,
     updateRole,
@@ -117,7 +127,7 @@ import {
 
 const router = Router();
 
-router.get("/", checkJWT, mustBe.admin, getRoles);
+router.get("/", checkJWT, mustBe.admin, paramsValidator.list, getRoles);
 router.post("/", checkJWT, mustBe.admin, roleValidator.addRole, addRole);
 router.patch("/:name", checkJWT, mustBe.admin, roleValidator.updateRole, updateRole);
 router.delete("/:name", checkJWT, mustBe.admin, roleValidator.nameRole, deleteRole);

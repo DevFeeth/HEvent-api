@@ -48,6 +48,16 @@
  *                     type: string
  *                 organizer_id:
  *                     type: integer
+ *                 organizer:
+ *                     type: object
+ *                     description: Organizer of the event (in GET /events only)
+ *                     properties:
+ *                         id:
+ *                             type: integer
+ *                         first_name:
+ *                             type: string
+ *                         last_name:
+ *                             type: string
  */
 
 import prisma from "../database/database.js";
@@ -65,11 +75,11 @@ export const getEvents = async (req, res) => {
             filters.status = (filters.status ?? ["PUBLISHED", "CANCELLED", "FINISHED"])
                 .filter(s => s !== "DRAFT");
             if(filters.status.length === 0){
-                return res.send([]);
+                return res.set("X-Total-Count", 0).send([]);
             }
         }
-        const events = await eventModel.readEvents(prisma, filters);
-        res.send(events);
+        const {items, total} = await eventModel.readEvents(prisma, filters);
+        res.set("X-Total-Count", total).send(items);
     } catch (err) {
         sendError(req, res, err);
     }

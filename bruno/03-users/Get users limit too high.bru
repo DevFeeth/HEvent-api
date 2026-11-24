@@ -1,0 +1,21 @@
+meta {
+  name: Get users limit too high
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/users?limit=500
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("returns 400", function () {
+    expect(res.status).to.equal(400);
+  });
+}

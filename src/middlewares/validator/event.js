@@ -98,6 +98,7 @@
  */
 
 import vine from "@vinejs/vine";
+import {listFields} from "./params.js";
 
 const date = () => vine.date({formats: ["YYYY-MM-DD"]})
     .transform(d => new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())));
@@ -110,7 +111,8 @@ const status = () => vine.enum(["DRAFT", "PUBLISHED", "CANCELLED", "FINISHED"]);
 const filterEventValidator = vine.create(vine.object({
     status: vine.array(status()).optional(),
     category_name: vine.string().trim().toUpperCase().maxLength(25).optional(),
-    organizer_id: vine.number().withoutDecimals().positive().optional()
+    organizer_id: vine.number().withoutDecimals().positive().optional(),
+    ...listFields
 }));
 
 const addEventValidator = vine.create(vine.object({

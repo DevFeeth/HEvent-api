@@ -19,9 +19,15 @@
  *               schema:
  *                   type: boolean
  *               description: Filter active or deactivated accounts
+ *             - $ref: '#/components/parameters/Search'
+ *             - $ref: '#/components/parameters/Page'
+ *             - $ref: '#/components/parameters/Limit'
  *         responses:
  *             200:
- *                 description: The list of users (without the password hash)
+ *                 description: The list of users (without the password hash), most recent first. Search in first name, last name, email and city
+ *                 headers:
+ *                     X-Total-Count:
+ *                         $ref: '#/components/headers/TotalCount'
  *                 content:
  *                     application/json:
  *                         schema:

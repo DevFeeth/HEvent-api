@@ -5,15 +5,24 @@
  *         summary: Get the list of categories (public)
  *         tags:
  *             - Category
+ *         parameters:
+ *             - $ref: '#/components/parameters/Search'
+ *             - $ref: '#/components/parameters/Page'
+ *             - $ref: '#/components/parameters/Limit'
  *         responses:
  *             200:
- *                 description: The list of categories
+ *                 description: The list of categories with their number of events. Search in code and label
+ *                 headers:
+ *                     X-Total-Count:
+ *                         $ref: '#/components/headers/TotalCount'
  *                 content:
  *                     application/json:
  *                         schema:
  *                             type: array
  *                             items:
  *                                 $ref: '#/components/schemas/Category'
+ *             400:
+ *                 $ref: '#/components/responses/ValidationError'
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  *     post:
@@ -99,9 +108,10 @@
  */
 
 import {Router} from 'express';
-import {checkJWT, optionalJWT} from "../middlewares/identification/jwt.js";
+import {checkJWT} from "../middlewares/identification/jwt.js";
 import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as categoryValidator from "../middlewares/validator/category.js";
+import * as paramsValidator from "../middlewares/validator/params.js";
 import {
     getCategories,
     updateCategory,
@@ -111,7 +121,7 @@ import {
 
 const router = Router();
 
-router.get("/", getCategories);
+router.get("/", paramsValidator.list, getCategories);
 router.post("/", checkJWT, mustBe.admin, categoryValidator.addCategory, addCategory);
 router.patch("/:name", checkJWT, mustBe.admin, categoryValidator.updateCategory, updateCategory);
 router.delete("/:name", checkJWT, mustBe.admin, categoryValidator.nameCategory, deleteCategory);

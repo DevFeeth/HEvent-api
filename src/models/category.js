@@ -1,9 +1,22 @@
-export const readCategories = async (db) => {
-    return await db.category.findMany({
-        orderBy: {
-            name: "asc"
-        }
-    });
+import {pageOf, searchWhere} from "../utils/pagination.js";
+
+// Renvoie {items, total} ; event_count : nombre d'événements de la catégorie
+export const readCategories = async (db, {search, page, limit} = {}) => {
+    const where = searchWhere(search, [(word) => ({name: word}), (word) => ({label: word})]);
+    const [categories, total] = await Promise.all([
+        db.category.findMany({
+            where,
+            include: {
+                _count: {select: {events: true}}
+            },
+            orderBy: {
+                name: "asc"
+            },
+            ...pageOf({page, limit})
+        }),
+        db.category.count({where})
+    ]);
+    return {items: categories.map(({_count, ...category}) => ({...category, event_count: _count.events})), total};
 };
 
 export const createCategory = async (db, {name, label}) => {

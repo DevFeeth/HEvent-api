@@ -1,0 +1,25 @@
+meta {
+  name: Search users
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/users?search=olive%20orga&limit=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("finds Olive Orga", function () {
+    expect(res.body.map(u => u.email)).to.include("orga@mail.com");
+  });
+}

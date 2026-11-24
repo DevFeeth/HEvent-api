@@ -1,9 +1,22 @@
-export const readRoles = async (db) => {
-    return await db.role.findMany({
-        orderBy: {
-            name: "asc"
-        }
-    });
+import {pageOf, searchWhere} from "../utils/pagination.js";
+
+// Renvoie {items, total} ; user_count : nombre d'utilisateurs qui ont ce rôle
+export const readRoles = async (db, {search, page, limit} = {}) => {
+    const where = searchWhere(search, [(word) => ({name: word}), (word) => ({label: word})]);
+    const [roles, total] = await Promise.all([
+        db.role.findMany({
+            where,
+            include: {
+                _count: {select: {users: true}}
+            },
+            orderBy: {
+                name: "asc"
+            },
+            ...pageOf({page, limit})
+        }),
+        db.role.count({where})
+    ]);
+    return {items: roles.map(({_count, ...role}) => ({...role, user_count: _count.users})), total};
 };
 
 export const createRole = async (db, {name, label}) => {

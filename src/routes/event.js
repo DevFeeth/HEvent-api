@@ -32,9 +32,15 @@
  *               schema:
  *                   type: integer
  *                   minimum: 1
+ *             - $ref: '#/components/parameters/Search'
+ *             - $ref: '#/components/parameters/Page'
+ *             - $ref: '#/components/parameters/Limit'
  *         responses:
  *             200:
- *                 description: The list of events
+ *                 description: The list of events, with their organizer. Search in name, category and organizer name
+ *                 headers:
+ *                     X-Total-Count:
+ *                         $ref: '#/components/headers/TotalCount'
  *                 content:
  *                     application/json:
  *                         schema:
