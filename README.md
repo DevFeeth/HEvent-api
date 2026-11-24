@@ -80,7 +80,7 @@ Voir [login.txt](login.txt). Tous les comptes ont le mot de passe **`password`**
 | `orga@mail.com` | ORGANIZER |
 | `admin@mail.com` | ADMIN |
 
-Le jeu de données contient aussi 25 autres comptes (4 organisateurs, des utilisateurs dont un compte désactivé), 17 événements (7 terminés, 1 annulé, 7 publiés, 2 brouillons), des types de billets, des codes promo et des commandes.
+Le jeu de données contient aussi 25 autres comptes (4 organisateurs, des utilisateurs dont un compte désactivé), 18 événements (7 terminés, 1 annulé, 8 publiés dont un qui a lieu le jour même pour tester le scan, 2 brouillons), des types de billets, des codes promo et des commandes.
 
 ## Authentification
 
