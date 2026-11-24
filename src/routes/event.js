@@ -55,7 +55,7 @@
  *                 $ref: '#/components/responses/ServerError'
  *     post:
  *         summary: Create an event (organizers only, admins included)
- *         description: The organizer is the logged-in user
+ *         description: The organizer is the logged-in user, an admin can choose another organizer with organizer_id
  *         security:
  *             - bearerAuth: []
  *         tags:

@@ -63,6 +63,7 @@
 import prisma from "../database/database.js";
 import * as eventModel from "../models/event.js";
 import * as ticketModel from "../models/ticket.js";
+import * as userModel from "../models/user.js";
 import {sendError} from "../utils/sendError.js";
 import {today} from "../utils/eventDate.js";
 
@@ -122,9 +123,17 @@ export const addEvent = async (req, res) => {
         if(hasPastDate(req.val)){
             return res.status(400).send("The dates of an event cannot be in the past");
         }
-        const id = await eventModel.createEvent(prisma, {
-            ...req.val, organizer_id: req.session.id
-        });
+        const {organizer_id = req.session.id, ...fields} = req.val;
+        if(organizer_id !== req.session.id){
+            if(req.session.role !== "ADMIN"){
+                return res.status(403).send("Only an admin can choose the organizer");
+            }
+            const organizer = await userModel.readUserSession(prisma, {id: organizer_id});
+            if(!organizer?.is_active || !["ORGANIZER", "ADMIN"].includes(organizer.role_name)){
+                return res.status(400).send("The organizer is not valid");
+            }
+        }
+        const id = await eventModel.createEvent(prisma, {...fields, organizer_id});
         res.status(201).json({id});
     } catch (err) {
         sendError(req, res, err);

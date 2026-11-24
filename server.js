@@ -9,7 +9,7 @@ const app = express();
 const port = 3001;
 
 app.use(pinoHTTP({logger}));
-// Le navigateur ne laisse lire au front que les headers listés ici : le total sert à la pagination
+
 app.use(cors({exposedHeaders: ["X-Total-Count"]}));
 app.use(express.json());
 app.use("/api/v1", Router);
