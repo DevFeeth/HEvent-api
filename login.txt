@@ -1,0 +1,21 @@
+HEvent API - Comptes de test
+============================
+
+Mot de passe de tous les comptes : password
+(les mots de passe sont hachés avec le PEPPER du fichier .env fourni avec la remise)
+
+Type d'utilisateur   Login (e-mail)
+------------------   --------------
+Utilisateur          user@mail.com
+Organisateur         orga@mail.com
+Administrateur       admin@mail.com
+
+Autres comptes de démonstration (même mot de passe)
+---------------------------------------------------
+Organisateur         contact@meuse-prod.be
+Organisateur         booking@liege-live.be
+Utilisateur          lucas.peeters@gmail.com
+Compte désactivé     thibault.gilson@gmail.com   (la connexion est refusée : 401)
+
+Connexion : POST /api/v1/users/login avec {"email": "...", "password": "..."}
+Après 5 échecs en 15 minutes pour une même adresse IP et un même e-mail, la connexion est bloquée (429).
