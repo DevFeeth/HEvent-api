@@ -9,7 +9,8 @@ const app = express();
 const port = 3001;
 
 app.use(pinoHTTP({logger}));
-app.use(cors());
+
+app.use(cors({exposedHeaders: ["X-Total-Count"]}));
 app.use(express.json());
 app.use("/api/v1", Router);
 

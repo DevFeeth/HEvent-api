@@ -92,6 +92,7 @@
  */
 
 import vine from "@vinejs/vine";
+import {listFields} from "./params.js";
 
 const roleName = () => vine.string().trim().toUpperCase().maxLength(25);
 
@@ -111,7 +112,8 @@ const loginValidator = vine.create(vine.object({
 
 const filterUserValidator = vine.create(vine.object({
     role_name: roleName().optional(),
-    is_active: vine.boolean().optional()
+    is_active: vine.boolean().optional(),
+    ...listFields
 }));
 
 export const registerFields = {

@@ -54,6 +54,12 @@ Pour repartir d'une base propre :
 docker compose down
 ```
 
+Ou, sans supprimer les conteneurs, réinitialiser la base avec le script JavaScript (il supprime toutes les tables puis exécute `hEvent.sql` ; `DATABASE_URL` doit pointer vers la base, par exemple `localhost:5432`) :
+
+```bash
+npm run initDB
+```
+
 ### Lancer l'API hors Docker (développement)
 
 Avec seulement la base dans Docker (`docker compose up -d db`) et `DATABASE_URL` rempli dans `.env` :
@@ -66,7 +72,7 @@ npm run dev
 
 ## Comptes de test
 
-Tous les comptes ont le mot de passe **`password`**.
+Voir [login.txt](login.txt). Tous les comptes ont le mot de passe **`password`**.
 
 | Email | Rôle |
 |---|---|
@@ -86,6 +92,10 @@ Authorization: Bearer <token>
 ```
 
 Le rôle et l'état du compte sont relus en base à chaque requête : un compte désactivé ou dont le rôle change est pris en compte immédiatement.
+
+Protection contre la force brute : après **5 échecs de connexion en 15 minutes** pour une même adresse IP et un même email, la connexion est refusée (429, header `Retry-After`).
+
+Les listes (`/users`, `/events`, `/categories`, `/roles`) acceptent `?search=&page=&limit=` : la limite est appliquée en SQL et le nombre total est renvoyé dans le header `X-Total-Count`.
 
 | Rôle | Droits |
 |---|---|
@@ -131,13 +141,13 @@ Pour la consulter, importer `swagger/spec.json` dans [editor.swagger.io](https:/
 
 ## Tests Bruno
 
-La collection est dans [bruno/](bruno/) : 71 requêtes et 99 tests (authentification, CRUD protégés, commandes, paiement, QR codes, cas d'erreur 400/401/403/404/409).
+La collection est dans [bruno/](bruno/) : 75 requêtes et 106 tests (authentification, CRUD protégés, pagination et recherche, commandes, paiement, QR codes, cas d'erreur 400/401/403/404/409). L'environnement `local` est dans `bruno/environments/`.
 
-- **Dans l'application Bruno** : *Open Collection* → dossier `bruno/`, puis *Run* sur la collection entière (les requêtes s'enchaînent : les tokens et les ids créés sont réutilisés par les suivantes).
+- **Dans l'application Bruno** : *Open Collection* → dossier `bruno/`, choisir l'environnement **local**, puis *Run* sur la collection entière (les requêtes s'enchaînent : les tokens et les ids créés sont réutilisés par les suivantes).
 - **En ligne de commande**, depuis le dossier `bruno/` :
 
 ```bash
-npx @usebruno/cli run -r
+npx @usebruno/cli run -r --env local
 ```
 
 L'API doit être lancée. La collection peut être rejouée plusieurs fois sans réinitialiser la base.
@@ -152,13 +162,16 @@ src/
 ├── middlewares/
 │   ├── identification/   Lecture du token JWT
 │   ├── authorization/    Vérification du rôle
+│   ├── security/         Limite des tentatives de connexion
 │   └── validator/        Validation des données (VineJS)
 ├── controllers/          Logique de chaque route, transactions
 ├── models/               Accès à la base (Prisma)
 ├── jobs/                 Tâche planifiée (expiration des commandes)
-├── utils/                Hachage, tokens, gestion des erreurs, logs, paiement simulé
+├── utils/                Hachage, tokens, gestion des erreurs, logs, pagination, paiement simulé
 ├── database/             Client Prisma
-└── scripts/SQL/          Création et remplissage de la base
+└── scripts/
+    ├── SQL/              Création et remplissage de la base (hEvent.sql)
+    └── JS/               initDB.js : réinitialise la base (npm run initDB)
 bruno/                    Collection de tests Bruno
 swagger/                  Génération et spécification OpenAPI
 ```

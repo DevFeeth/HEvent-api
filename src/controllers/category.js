@@ -11,6 +11,10 @@
  *                 label:
  *                     type: string
  *                     example: Concert
+ *                 event_count:
+ *                     type: integer
+ *                     description: Number of events in this category (in the list only)
+ *                     example: 9
  *     responses:
  *         CategoryAdded:
  *             description: Category created, its name is returned
@@ -30,8 +34,8 @@ import {sendError} from "../utils/sendError.js";
 
 export const getCategories = async (req, res) => {
     try {
-        const categories = await categoryModel.readCategories(prisma);
-        res.send(categories);
+        const {items, total} = await categoryModel.readCategories(prisma, req.val);
+        res.set("X-Total-Count", total).send(items);
     } catch (err) {
         sendError(req, res, err);
     }

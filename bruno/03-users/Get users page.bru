@@ -1,0 +1,26 @@
+meta {
+  name: Get users page
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/users?page=1&limit=5
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("returns 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("5 users at most and the total in a header", function () {
+    expect(res.body.length).to.be.at.most(5);
+    expect(Number(res.getHeader("x-total-count"))).to.be.at.least(res.body.length);
+  });
+}

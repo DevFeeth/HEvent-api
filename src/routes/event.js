@@ -32,9 +32,15 @@
  *               schema:
  *                   type: integer
  *                   minimum: 1
+ *             - $ref: '#/components/parameters/Search'
+ *             - $ref: '#/components/parameters/Page'
+ *             - $ref: '#/components/parameters/Limit'
  *         responses:
  *             200:
- *                 description: The list of events
+ *                 description: The list of events, with their organizer. Search in name, category and organizer name
+ *                 headers:
+ *                     X-Total-Count:
+ *                         $ref: '#/components/headers/TotalCount'
  *                 content:
  *                     application/json:
  *                         schema:
@@ -49,7 +55,7 @@
  *                 $ref: '#/components/responses/ServerError'
  *     post:
  *         summary: Create an event (organizers only, admins included)
- *         description: The organizer is the logged-in user
+ *         description: The organizer is the logged-in user, an admin can choose another organizer with organizer_id
  *         security:
  *             - bearerAuth: []
  *         tags:

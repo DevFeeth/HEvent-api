@@ -19,9 +19,15 @@
  *               schema:
  *                   type: boolean
  *               description: Filter active or deactivated accounts
+ *             - $ref: '#/components/parameters/Search'
+ *             - $ref: '#/components/parameters/Page'
+ *             - $ref: '#/components/parameters/Limit'
  *         responses:
  *             200:
- *                 description: The list of users (without the password hash)
+ *                 description: The list of users (without the password hash), most recent first. Search in first name, last name, email and city
+ *                 headers:
+ *                     X-Total-Count:
+ *                         $ref: '#/components/headers/TotalCount'
  *                 content:
  *                     application/json:
  *                         schema:
@@ -82,6 +88,18 @@
  *                         schema:
  *                             type: string
  *                             example: Unauthorized
+ *             429:
+ *                 description: Too many failed attempts (5 in 15 minutes for this IP address and email). The Retry-After header gives the number of seconds to wait
+ *                 headers:
+ *                     Retry-After:
+ *                         schema:
+ *                             type: integer
+ *                             example: 840
+ *                 content:
+ *                     text/plain:
+ *                         schema:
+ *                             type: string
+ *                             example: Too many failed login attempts, try again later
  *             500:
  *                 $ref: '#/components/responses/ServerError'
  */
@@ -305,6 +323,7 @@ import * as mustBe from "../middlewares/authorization/mustBe.js";
 import * as userValidator from "../middlewares/validator/user.js";
 import * as paramsValidator from "../middlewares/validator/params.js";
 import * as ticketValidator from "../middlewares/validator/ticket.js";
+import {loginLimiter} from "../middlewares/security/loginLimiter.js";
 import {
     getUsers,
     getUserById,
@@ -329,7 +348,7 @@ router.get("/me/orders", checkJWT, getMyOrders);
 router.get("/:id", checkJWT, mustBe.admin, paramsValidator.id, getUserById);
 
 router.post("/", userValidator.registerUser, registerUser);
-router.post("/login", userValidator.loginUser, loginUser);
+router.post("/login", loginLimiter, userValidator.loginUser, loginUser);
 
 router.patch("/me", checkJWT, userValidator.updateMe, updateMe);
 router.patch("/:id", checkJWT, mustBe.admin, userValidator.updateUser, updateUser);

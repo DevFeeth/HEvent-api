@@ -11,6 +11,10 @@
  *                 label:
  *                     type: string
  *                     example: Organisateur
+ *                 user_count:
+ *                     type: integer
+ *                     description: Number of users with this role (in the list only)
+ *                     example: 5
  *     responses:
  *         RoleAdded:
  *             description: Role created, its name is returned
@@ -32,8 +36,8 @@ const baseRole = ["ADMIN", "USER","ORGANIZER"];
 
 export const getRoles = async (req, res) => {
     try {
-        const roles = await roleModel.readRoles(prisma);
-        res.send(roles);
+        const {items, total} = await roleModel.readRoles(prisma, req.val);
+        res.set("X-Total-Count", total).send(items);
     } catch (err) {
         sendError(req, res, err);
     }

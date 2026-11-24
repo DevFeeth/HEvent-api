@@ -52,9 +52,8 @@ import {sendError} from "../utils/sendError.js";
 
 export const getUsers = async (req, res) => {
     try {
-        const filters = req.val;
-        const users = await userModel.readUsers(prisma, filters);
-        res.send(users);
+        const {items, total} = await userModel.readUsers(prisma, req.val);
+        res.set("X-Total-Count", total).send(items);
     } catch (err) {
         sendError(req, res, err);
     }

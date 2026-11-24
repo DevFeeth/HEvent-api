@@ -48,6 +48,9 @@
  *                     type: string
  *                     maxLength: 25
  *                     example: PARTY
+ *                 organizer_id:
+ *                     type: integer
+ *                     description: Admins only, the organizer of the event (default is the logged-in user)
  *             required:
  *                 - name
  *                 - start_date
@@ -57,7 +60,7 @@
  *                 - category_name
  *         EventToUpdate:
  *             type: object
- *             description: Same fields as EventToAdd, all optional (at least one field is required)
+ *             description: Same fields as EventToAdd except organizer_id, all optional (at least one field is required)
  *             properties:
  *                 name:
  *                     type: string
@@ -98,6 +101,7 @@
  */
 
 import vine from "@vinejs/vine";
+import {listFields} from "./params.js";
 
 const date = () => vine.date({formats: ["YYYY-MM-DD"]})
     .transform(d => new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())));
@@ -110,7 +114,8 @@ const status = () => vine.enum(["DRAFT", "PUBLISHED", "CANCELLED", "FINISHED"]);
 const filterEventValidator = vine.create(vine.object({
     status: vine.array(status()).optional(),
     category_name: vine.string().trim().toUpperCase().maxLength(25).optional(),
-    organizer_id: vine.number().withoutDecimals().positive().optional()
+    organizer_id: vine.number().withoutDecimals().positive().optional(),
+    ...listFields
 }));
 
 const addEventValidator = vine.create(vine.object({
@@ -124,7 +129,8 @@ const addEventValidator = vine.create(vine.object({
     latitude: vine.number().range([-90, 90]).optional(),
     longitude: vine.number().range([-180, 180]).optional(),
     status: status().optional(),
-    category_name: vine.string().trim().toUpperCase().maxLength(25)
+    category_name: vine.string().trim().toUpperCase().maxLength(25),
+    organizer_id: vine.number().withoutDecimals().positive().optional()
 }));
 
 const updateEventValidator = vine.create(vine.object({

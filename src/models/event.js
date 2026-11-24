@@ -1,18 +1,35 @@
 import {today} from "../utils/eventDate.js";
+import {pageOf, searchWhere} from "../utils/pagination.js";
 
-export const readEvents = async (db, {status, category_name, organizer_id} = {}) => {
-    return await db.events.findMany({
-        where: {
-            status: Array.isArray(status) ? {in: status} : status,
-            category_name,
-            organizer_id
-        },
-        orderBy: [
-            {start_date: "asc"},
-            {start_time: "asc"},
-            {id: "asc"}
-        ]
-    });
+// Renvoie {items, total} : la page demandée et le nombre total d'événements correspondants
+export const readEvents = async (db, {status, category_name, organizer_id, search, page, limit} = {}) => {
+    const where = {
+        status: Array.isArray(status) ? {in: status} : status,
+        category_name,
+        organizer_id,
+        ...searchWhere(search, [
+            (word) => ({name: word}),
+            (word) => ({category_name: word}),
+            (word) => ({users: {first_name: word}}),
+            (word) => ({users: {last_name: word}})
+        ])
+    };
+    const [events, total] = await Promise.all([
+        db.events.findMany({
+            where,
+            include: {
+                users: {select: {id: true, first_name: true, last_name: true}}
+            },
+            orderBy: [
+                {start_date: "asc"},
+                {start_time: "asc"},
+                {id: "asc"}
+            ],
+            ...pageOf({page, limit})
+        }),
+        db.events.count({where})
+    ]);
+    return {items: events.map(({users, ...event}) => ({...event, organizer: users})), total};
 };
 
 export const readUpcomingEvents = async (db, {limit = 3} = {}) => {

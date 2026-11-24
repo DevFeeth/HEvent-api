@@ -1,13 +1,32 @@
-export const readUsers = async (db, {role_name, is_active} = {}) => {
-    return await db.users.findMany({
-        where: {
-            role_name,
-            is_active
-        },
-        omit: {
-            password_hash: true
-        }
-    });
+import {pageOf, searchWhere} from "../utils/pagination.js";
+
+// Renvoie {items, total}, les plus récents d'abord
+export const readUsers = async (db, {role_name, is_active, search, page, limit} = {}) => {
+    const where = {
+        role_name,
+        is_active,
+        ...searchWhere(search, [
+            (word) => ({first_name: word}),
+            (word) => ({last_name: word}),
+            (word) => ({email: word}),
+            (word) => ({city: word})
+        ])
+    };
+    const [items, total] = await Promise.all([
+        db.users.findMany({
+            where,
+            omit: {
+                password_hash: true
+            },
+            orderBy: [
+                {created_at: "desc"},
+                {id: "desc"}
+            ],
+            ...pageOf({page, limit})
+        }),
+        db.users.count({where})
+    ]);
+    return {items, total};
 };
 
 export const readUserById = async (db, {id}) => {
